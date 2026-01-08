@@ -8,10 +8,43 @@ import type { PostPackWorkflow, FaseStatus } from '../types/workflow';
 import { FASES_CONFIG } from '../types/workflow';
 
 interface WorkflowTrackerProps {
-  workflow: PostPackWorkflow;
+  workflow?: PostPackWorkflow;
   onFaseClick?: (fase: number) => void;
   onAvancar?: (fase: number) => void;
 }
+
+// Workflow de demonstracao
+const DEMO_WORKFLOW: PostPackWorkflow = {
+  id: 'demo-001',
+  postpack_id: 'postpack-001',
+  status: 'fase_2',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  completed_at: null,
+  created_by: 'Tigrao',
+  approved_by: null,
+  fase_1_status: 'concluido',
+  fase_1_completed_at: new Date().toISOString(),
+  fase_1_checklist: { hook_criado: true, legenda_escrita: true, cta_definido: true, hashtags_selecionadas: true, imagem_pronta: true },
+  fase_2_status: 'em_andamento',
+  fase_2_completed_at: null,
+  fase_2_checklist: { ortografia_verificada: true, tom_adequado: false, cta_efetivo: false, hashtags_relevantes: true },
+  fase_2_feedback: null,
+  fase_3_status: 'pendente',
+  fase_3_completed_at: null,
+  fase_3_checklist: {},
+  fase_4_status: 'pendente',
+  fase_4_completed_at: null,
+  fase_4_checklist: {},
+  fase_4_published_url: null,
+  fase_4_published_at: null,
+  fase_5_status: 'pendente',
+  fase_5_completed_at: null,
+  fase_5_checklist: {},
+  metricas_24h: null,
+  metricas_7d: null,
+  notas: 'Post sobre protocolos de rejuvenescimento facial',
+};
 
 const STATUS_COLORS: Record<FaseStatus, string> = {
   pendente: 'bg-gray-200 text-gray-600',
@@ -28,7 +61,7 @@ const STATUS_ICONS: Record<FaseStatus, string> = {
 };
 
 export default function WorkflowTracker({
-  workflow,
+  workflow = DEMO_WORKFLOW,
   onFaseClick,
   onAvancar
 }: WorkflowTrackerProps) {
