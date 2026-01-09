@@ -57,29 +57,32 @@ export default function WorkflowListPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
-            <p className="text-sm text-gray-500">Gerenciamento de PostPacks</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Workflows</h1>
+            <p className="text-xs sm:text-sm text-gray-500">Gerenciamento de PostPacks</p>
           </div>
-          <button onClick={() => router.push('/workflow/novo')} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => router.push('/workflow/novo')}
+            className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
             + Novo PostPack
           </button>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">Total</p>
+      <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-500">Total</p>
             <p className="text-2xl font-bold">{stats.total}</p>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">Em Andamento</p>
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-500">Em Andamento</p>
             <p className="text-2xl font-bold text-blue-600">{stats.emAndamento}</p>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">Concluidos</p>
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-500">Concluidos</p>
             <p className="text-2xl font-bold text-green-600">{stats.concluidos}</p>
           </div>
         </div>
@@ -89,14 +92,14 @@ export default function WorkflowListPage() {
         {loading && (
           <div className="text-center py-12">
             <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-500">Carregando...</p>
+            <p className="text-gray-500 text-sm sm:text-base">Carregando...</p>
           </div>
         )}
 
         {!loading && workflows.length === 0 && (
           <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <p className="text-gray-500 mb-4">Nenhum workflow encontrado</p>
-            <button onClick={() => router.push('/workflow/novo')} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+            <p className="text-gray-500 mb-4 text-sm sm:text-base">Nenhum workflow encontrado</p>
+            <button onClick={() => router.push('/workflow/novo')} className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg">
               Criar primeiro PostPack
             </button>
           </div>
@@ -105,18 +108,18 @@ export default function WorkflowListPage() {
         {!loading && workflows.length > 0 && (
           <div className="space-y-3">
             {workflows.map((wf) => (
-              <div key={wf.id} onClick={() => router.push(`/workflow/${wf.id}`)} className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md cursor-pointer">
-                <div className="flex justify-between">
+              <div key={wf.id} onClick={() => router.push(`/workflow/${wf.id}`)} className="bg-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md cursor-pointer">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <h3 className="font-semibold">PostPack #{wf.id.slice(0, 8)}</h3>
-                    <p className="text-sm text-gray-500">Por: {wf.created_by || 'Sistema'}</p>
-                    {wf.notas && <p className="text-sm text-gray-600 mt-1">{wf.notas}</p>}
+                    <h3 className="font-semibold text-sm sm:text-base">PostPack #{wf.id.slice(0, 8)}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500">Por: {wf.created_by || 'Sistema'}</p>
+                    {wf.notas && <p className="text-xs sm:text-sm text-gray-600 mt-1">{wf.notas}</p>}
                   </div>
-                  <div className="text-right">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[wf.status]}`}>
+                  <div className="text-left sm:text-right">
+                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[wf.status]}`}>
                       {STATUS_LABELS[wf.status]}
                     </span>
-                    <p className="text-xs text-gray-400 mt-2">{new Date(wf.created_at).toLocaleDateString('pt-BR')}</p>
+                    <p className="text-[11px] sm:text-xs text-gray-400 mt-2">{new Date(wf.created_at).toLocaleDateString('pt-BR')}</p>
                   </div>
                 </div>
                 <div className="mt-3 h-2 bg-gray-200 rounded-full">

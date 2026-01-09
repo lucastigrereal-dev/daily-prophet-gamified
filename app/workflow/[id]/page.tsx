@@ -92,8 +92,8 @@ export default function WorkflowDetailPage() {
     }
   }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div></div>;
-  if (error || !workflow) return <div className="min-h-screen flex items-center justify-center"><p className="text-red-500">{error || 'Nao encontrado'}</p></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center p-4"><div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div></div>;
+  if (error || !workflow) return <div className="min-h-screen flex items-center justify-center p-4"><p className="text-red-500 text-sm sm:text-base">{error || 'Nao encontrado'}</p></div>;
 
   const fases = [
     { num: 1, key: 'fase_1', status: workflow.fase_1_status, completed: workflow.fase_1_completed_at },
@@ -106,37 +106,37 @@ export default function WorkflowDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <button onClick={() => router.push('/workflow')} className="text-blue-600 hover:underline mb-2">&larr; Voltar</button>
-          <div className="flex justify-between">
+        <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
+          <button onClick={() => router.push('/workflow')} className="text-blue-600 hover:underline mb-2 text-sm sm:text-base">&larr; Voltar</button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold">PostPack #{workflow.id.slice(0, 8)}</h1>
-              <p className="text-sm text-gray-500">Por {workflow.created_by || 'Sistema'} - {new Date(workflow.created_at).toLocaleDateString('pt-BR')}</p>
+              <h1 className="text-xl sm:text-2xl font-bold">PostPack #{workflow.id.slice(0, 8)}</h1>
+              <p className="text-xs sm:text-sm text-gray-500">Por {workflow.created_by || 'Sistema'} - {new Date(workflow.created_at).toLocaleDateString('pt-BR')}</p>
             </div>
-            <span className={`px-3 py-1 h-fit rounded-full text-sm ${workflow.status === 'concluido' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+            <span className={`inline-flex px-3 py-1 h-fit rounded-full text-xs sm:text-sm ${workflow.status === 'concluido' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
               {workflow.status.replace('_', ' ').toUpperCase()}
             </span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold mb-6">Progresso</h2>
-          <div className="relative mb-8">
-            <div className="absolute top-6 left-6 right-6 h-1 bg-gray-200">
+      <main className="max-w-4xl mx-auto px-4 py-4 sm:py-6 space-y-6">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6">Progresso</h2>
+          <div className="relative mb-6 sm:mb-8">
+            <div className="hidden sm:block absolute top-6 left-6 right-6 h-1 bg-gray-200">
               <div className="h-full bg-green-500" style={{ width: `${(fases.filter(f => f.status === 'concluido').length / 5) * 100}%` }} />
             </div>
-            <div className="relative flex justify-between">
+            <div className="relative grid grid-cols-2 gap-4 sm:flex sm:justify-between">
               {fases.map((f) => {
                 const cfg = FASES_CONFIG[f.key as keyof typeof FASES_CONFIG];
                 return (
-                  <div key={f.num} className="flex flex-col items-center">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold z-10 ${STATUS_COLORS[f.status as FaseStatus]}`}>
+                  <div key={f.num} className="flex flex-col items-center text-center">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-base sm:text-lg font-bold z-10 ${STATUS_COLORS[f.status as FaseStatus]}`}>
                       {f.status === 'concluido' ? '✓' : f.status === 'em_progresso' ? '◐' : f.num}
                     </div>
-                    <span className="mt-2 text-sm font-medium">{cfg.nome}</span>
-                    {f.completed && <span className="text-xs text-gray-400">{new Date(f.completed).toLocaleDateString('pt-BR')}</span>}
+                    <span className="mt-2 text-xs sm:text-sm font-medium">{cfg.nome}</span>
+                    {f.completed && <span className="text-[10px] sm:text-xs text-gray-400">{new Date(f.completed).toLocaleDateString('pt-BR')}</span>}
                   </div>
                 );
               })}
@@ -157,15 +157,15 @@ export default function WorkflowDetailPage() {
         </div>
 
         {workflow.notas && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="font-semibold mb-2">Notas</h2>
-            <p className="text-gray-600">{workflow.notas}</p>
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <h2 className="font-semibold mb-2 text-sm sm:text-base">Notas</h2>
+            <p className="text-gray-600 text-sm sm:text-base">{workflow.notas}</p>
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-red-200">
-          <h2 className="font-semibold text-red-600 mb-4">Zona de Perigo</h2>
-          <button onClick={excluir} disabled={updating} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border border-red-200">
+          <h2 className="font-semibold text-red-600 mb-4 text-sm sm:text-base">Zona de Perigo</h2>
+          <button onClick={excluir} disabled={updating} className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400">
             Excluir Workflow
           </button>
         </div>

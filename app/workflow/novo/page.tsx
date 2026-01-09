@@ -49,32 +49,32 @@ export default function NovoWorkflowPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <button onClick={() => router.back()} className="text-blue-600 hover:underline mb-2">&larr; Voltar</button>
-          <h1 className="text-2xl font-bold">Novo PostPack</h1>
+        <div className="max-w-2xl mx-auto px-4 py-4 sm:py-6">
+          <button onClick={() => router.back()} className="text-blue-600 hover:underline mb-2 text-sm sm:text-base">&larr; Voltar</button>
+          <h1 className="text-xl sm:text-2xl font-bold">Novo PostPack</h1>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-6">
+      <main className="max-w-2xl mx-auto px-4 py-4 sm:py-6">
         {error && <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-5 sm:space-y-6">
           <div>
             <label className="block text-sm font-medium mb-2">Titulo *</label>
             <input type="text" value={formData.titulo} onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
-              placeholder="Ex: Post sobre Botox" className="w-full px-4 py-3 border rounded-lg" disabled={loading} />
+              placeholder="Ex: Post sobre Botox" className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg text-sm sm:text-base" disabled={loading} />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">Descricao</label>
             <textarea value={formData.descricao} onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-              placeholder="Descreva o objetivo..." rows={4} className="w-full px-4 py-3 border rounded-lg" disabled={loading} />
+              placeholder="Descreva o objetivo..." rows={4} className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg text-sm sm:text-base" disabled={loading} />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">Criado por</label>
             <select value={formData.criador} onChange={(e) => setFormData({ ...formData, criador: e.target.value })}
-              className="w-full px-4 py-3 border rounded-lg" disabled={loading}>
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg text-sm sm:text-base" disabled={loading}>
               <option value="Tigrao">Tigrao</option>
               <option value="Dra. Karina">Dra. Karina</option>
               <option value="Equipe">Equipe</option>
@@ -82,9 +82,9 @@ export default function NovoWorkflowPage() {
             </select>
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="font-medium text-blue-900 mb-2">Fases do Workflow</h3>
-            <ol className="text-sm text-blue-700 space-y-1">
+          <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+            <h3 className="font-medium text-blue-900 mb-2 text-sm sm:text-base">Fases do Workflow</h3>
+            <ol className="text-xs sm:text-sm text-blue-700 space-y-1">
               <li>1. Criacao - Hook, legenda, CTA, hashtags</li>
               <li>2. Revisao - Ortografia e tom</li>
               <li>3. Aprovacao - Dra. Karina</li>
@@ -94,7 +94,7 @@ export default function NovoWorkflowPage() {
           </div>
 
           <button type="submit" disabled={loading}
-            className={`w-full py-3 rounded-lg font-medium text-white ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'}`}>
+            className={`w-full py-3.5 sm:py-3 rounded-lg font-medium text-white ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'}`}>
             {loading ? 'Criando...' : 'Criar PostPack'}
           </button>
         </form>

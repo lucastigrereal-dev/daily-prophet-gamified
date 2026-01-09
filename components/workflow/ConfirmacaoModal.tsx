@@ -23,11 +23,11 @@ export function ConfirmacaoModal({
   if (!isOpen || !item) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-md">
-        <div className="p-4 border-b flex justify-between">
-          <h3 className="font-bold">✅ Confirmar</h3>
-          <button onClick={onClose}>✕</button>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-0 sm:p-4 z-50">
+      <div className="bg-white w-full h-full sm:h-auto sm:max-w-md rounded-none sm:rounded-lg">
+        <div className="p-4 border-b flex justify-between items-center">
+          <h3 className="font-bold text-sm sm:text-base">✅ Confirmar</h3>
+          <button onClick={onClose} className="min-h-[44px] min-w-[44px] text-center">✕</button>
         </div>
 
         <div className="p-4">

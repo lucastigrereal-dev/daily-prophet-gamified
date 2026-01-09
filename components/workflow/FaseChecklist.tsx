@@ -43,14 +43,14 @@ export function FaseChecklist({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 bg-gray-50 border-b">
-        <h2 className="text-xl font-bold">
+      <div className="p-3 sm:p-4 bg-gray-50 border-b">
+        <h2 className="text-lg sm:text-xl font-bold">
           {config.icone} {config.nome}
         </h2>
-        <p className="text-gray-600">{config.descricao}</p>
+        <p className="text-gray-600 text-sm sm:text-base">{config.descricao}</p>
         <div className="mt-2">
           <ProgressBar progress={progress} />
-          <p className="text-sm text-right mt-1">{progress}%</p>
+          <p className="text-xs sm:text-sm text-right mt-1">{progress}%</p>
         </div>
       </div>
 
@@ -67,13 +67,13 @@ export function FaseChecklist({
         ))}
       </div>
 
-      <div className="p-4 border-t flex gap-2">
-        <button onClick={onVoltar} className="flex-1 py-3 border rounded-lg">
+      <div className="p-3 sm:p-4 border-t flex flex-col sm:flex-row gap-2">
+        <button onClick={onVoltar} className="flex-1 min-h-[44px] py-3 border rounded-lg">
           ← Voltar
         </button>
         <button
           onClick={onAvancar}
-          className="flex-1 py-3 bg-blue-500 text-white rounded-lg"
+            className="flex-1 min-h-[44px] py-3 bg-blue-500 text-white rounded-lg"
         >
           {podeAvancar ? 'Avançar →' : 'Avançar ⚠️'}
         </button>
