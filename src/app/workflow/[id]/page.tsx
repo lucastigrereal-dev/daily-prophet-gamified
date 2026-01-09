@@ -9,12 +9,13 @@ import { FASES_CONFIG } from '@/config/checklist-config';
 
 export default function WorkflowDetailPage() {
   const router = useRouter();
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const [workflow, setWorkflow] = useState<PostpackWorkflow | null>(null);
+  const id = params?.id;
 
   useEffect(() => {
-    if (params.id) workflowService.getById(params.id as string).then(setWorkflow);
-  }, [params.id]);
+    if (id) workflowService.getById(id).then(setWorkflow);
+  }, [id]);
 
   if (!workflow) return <div className="p-4">Carregando...</div>;
 

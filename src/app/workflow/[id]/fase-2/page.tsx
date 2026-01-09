@@ -14,15 +14,16 @@ import { FASE_2_CONFIG } from '@/config/checklist-config';
 
 export default function Fase2Page() {
   const router = useRouter();
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const [workflow, setWorkflow] = useState<PostpackWorkflow | null>(null);
   const [modalItem, setModalItem] = useState<ChecklistItemConfig | null>(null);
   const [showAlerta, setShowAlerta] = useState(false);
   const [pendentes, setPendentes] = useState<ChecklistItemConfig[]>([]);
+  const id = params?.id;
 
   useEffect(() => {
-    if (params.id) workflowService.getById(params.id as string).then(setWorkflow);
-  }, [params.id]);
+    if (id) workflowService.getById(id).then(setWorkflow);
+  }, [id]);
 
   const handleConfirm = async (obs?: string) => {
     if (!workflow || !modalItem) return;
