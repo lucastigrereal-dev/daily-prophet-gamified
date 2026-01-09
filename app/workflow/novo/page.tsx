@@ -31,7 +31,7 @@ export default function NovoWorkflowPage() {
           postpack_id: postpack.id,
           created_by: formData.criador,
           status: 'fase_1',
-          fase_1_status: 'em_andamento',
+          fase_1_status: 'em_progresso',
           notas: formData.descricao,
         }])
         .select()
