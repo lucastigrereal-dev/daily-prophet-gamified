@@ -1,120 +1,129 @@
-// Tipos para PostPack Workflow
-// Daily Prophet - Instituto Rodovansky
+// Tipos do Sistema de Workflow de 5 Fases
 
-export type WorkflowStatus = 'fase_1' | 'fase_2' | 'fase_3' | 'fase_4' | 'fase_5' | 'concluido';
-export type FaseStatus = 'pendente' | 'em_andamento' | 'concluido' | 'rejeitado';
+export type FaseNumero = 'fase_1' | 'fase_2' | 'fase_3' | 'fase_4' | 'fase_5';
+export type WorkflowStatus = FaseNumero | 'concluido';
+export type FaseStatus = 'pendente' | 'em_progresso' | 'concluido' | 'incompleto';
+export type ChecklistItemStatus = 'pendente' | 'concluido' | 'pulado' | 'na';
 
-export interface FaseChecklist {
-  [key: string]: boolean;
+export interface PostpackResumo {
+  id: string;
+  title: string;
+  objective: string;
+  format: string;
+  status: string;
 }
 
-export interface Metricas {
+export interface Metricas24h {
+  views?: number;
   likes?: number;
+  saves?: number;
   comments?: number;
   shares?: number;
-  saves?: number;
-  reach?: number;
-  impressions?: number;
-  engagement_rate?: number;
 }
 
-export interface PostPackWorkflow {
+export interface ChecklistItemData {
+  id: string;
+  status: ChecklistItemStatus;
+  observacao?: string;
+  timestamp?: string;
+}
+
+export interface ChecklistItemConfig {
+  id: string;
+  label: string;
+  descricao?: string;
+  obrigatorio: boolean;
+  tipo?: 'checkbox' | 'texto' | 'arquivo' | 'link';
+  botaoCopiar?: boolean;
+  conteudoDinamico?: string;
+}
+
+export interface FaseConfig {
+  nome: string;
+  icone: string;
+  descricao: string;
+  items: ChecklistItemConfig[];
+}
+
+export interface FaseData {
+  status: FaseStatus;
+  checklist: Record<string, ChecklistItemData>;
+  started_at?: string;
+  completed_at?: string;
+  feedback?: string;
+}
+
+export interface PostpackWorkflow {
   id: string;
   postpack_id: string;
   status: WorkflowStatus;
+  created_by?: string;
+  approved_by?: string;
   created_at: string;
   updated_at: string;
-  completed_at: string | null;
-  created_by: string | null;
-  approved_by: string | null;
-  
-  // Fase 1: Criacao
-  fase_1_status: FaseStatus;
-  fase_1_completed_at: string | null;
-  fase_1_checklist: FaseChecklist;
-  
-  // Fase 2: Revisao
-  fase_2_status: FaseStatus;
-  fase_2_completed_at: string | null;
-  fase_2_checklist: FaseChecklist;
-  fase_2_feedback: string | null;
-  
-  // Fase 3: Aprovacao
-  fase_3_status: FaseStatus;
-  fase_3_completed_at: string | null;
-  fase_3_checklist: FaseChecklist;
-  
-  // Fase 4: Publicacao
-  fase_4_status: FaseStatus;
-  fase_4_completed_at: string | null;
-  fase_4_checklist: FaseChecklist;
-  fase_4_published_url: string | null;
-  fase_4_published_at: string | null;
-  
-  // Fase 5: Metricas
-  fase_5_status: FaseStatus;
-  fase_5_completed_at: string | null;
-  fase_5_checklist: FaseChecklist;
-  metricas_24h: Metricas | null;
-  metricas_7d: Metricas | null;
-  
-  notas: string | null;
+  completed_at?: string;
+  published_url?: string;
+  published_at?: string;
+  metricas_24h?: Metricas24h;
+  metricas_7d?: Metricas24h;
+  notas?: string;
+  fase_1: FaseData;
+  fase_2: FaseData;
+  fase_3: FaseData;
+  fase_4: FaseData;
+  fase_5: FaseData;
 }
 
-// Tipo para criar novo workflow
-export type CreateWorkflow = Pick<PostPackWorkflow, 'postpack_id' | 'created_by'>;
+export interface PostpackWorkflowRow {
+  id: string;
+  postpack_id: string;
+  status: string;
+  created_by?: string;
+  approved_by?: string;
+  created_at: string;
+  updated_at: string;
+  completed_at?: string;
+  notas?: string;
+  metricas_24h?: Metricas24h;
+  metricas_7d?: Metricas24h;
+  fase_1_status: string;
+  fase_1_checklist: Record<string, ChecklistItemData>;
+  fase_1_started_at?: string;
+  fase_1_completed_at?: string;
+  fase_2_status: string;
+  fase_2_checklist: Record<string, ChecklistItemData>;
+  fase_2_started_at?: string;
+  fase_2_completed_at?: string;
+  fase_2_feedback?: string;
+  fase_3_status: string;
+  fase_3_checklist: Record<string, ChecklistItemData>;
+  fase_3_started_at?: string;
+  fase_3_completed_at?: string;
+  fase_4_status: string;
+  fase_4_checklist: Record<string, ChecklistItemData>;
+  fase_4_started_at?: string;
+  fase_4_completed_at?: string;
+  fase_4_published_url?: string;
+  fase_4_published_at?: string;
+  fase_5_status: string;
+  fase_5_checklist: Record<string, ChecklistItemData>;
+  fase_5_started_at?: string;
+  fase_5_completed_at?: string;
+}
 
-// Tipo para atualizar workflow
-export type UpdateWorkflow = Partial<Omit<PostPackWorkflow, 'id' | 'created_at'>>;
+export interface CreateWorkflowInput {
+  postpack_id: string;
+  created_by?: string;
+}
 
-// Configuracao das fases
-export const FASES_CONFIG = {
-  fase_1: {
-    nome: 'Criacao',
-    descricao: 'Criacao do conteudo do post',
-    checklist_padrao: {
-      hook_criado: false,
-      legenda_escrita: false,
-      cta_definido: false,
-      hashtags_selecionadas: false,
-      imagem_pronta: false,
-    }
-  },
-  fase_2: {
-    nome: 'Revisao',
-    descricao: 'Revisao e ajustes do conteudo',
-    checklist_padrao: {
-      ortografia_verificada: false,
-      tom_adequado: false,
-      cta_efetivo: false,
-      hashtags_relevantes: false,
-    }
-  },
-  fase_3: {
-    nome: 'Aprovacao',
-    descricao: 'Aprovacao final pela Dra. Karina',
-    checklist_padrao: {
-      conteudo_aprovado: false,
-      imagem_aprovada: false,
-      data_publicacao_definida: false,
-    }
-  },
-  fase_4: {
-    nome: 'Publicacao',
-    descricao: 'Publicacao no Instagram',
-    checklist_padrao: {
-      publicado_instagram: false,
-      stories_publicado: false,
-      link_salvo: false,
-    }
-  },
-  fase_5: {
-    nome: 'Metricas',
-    descricao: 'Coleta e analise de metricas',
-    checklist_padrao: {
-      metricas_24h_coletadas: false,
-      metricas_7d_coletadas: false,
-      analise_realizada: false,
-    }
-  }
-} as const;
+export interface WorkflowFilters {
+  status?: WorkflowStatus[];
+  postpack_id?: string;
+  created_by?: string;
+  created_after?: string;
+  created_before?: string;
+  limit?: number;
+}
+
+// Alias para compatibilidade
+export type PostPackWorkflow = PostpackWorkflow;

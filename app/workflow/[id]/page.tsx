@@ -3,20 +3,20 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import type { PostPackWorkflow, FaseStatus } from '@/types/workflow';
-import { FASES_CONFIG } from '@/types/workflow';
+import type { PostpackWorkflowRow, FaseStatus } from '@/types/workflow';
+import { FASES_CONFIG } from '@/config/checklist-config';
 
 const STATUS_COLORS: Record<FaseStatus, string> = {
   pendente: 'bg-gray-200 text-gray-600',
-  em_andamento: 'bg-blue-500 text-white',
+  em_progresso: 'bg-blue-500 text-white',
   concluido: 'bg-green-500 text-white',
-  rejeitado: 'bg-red-500 text-white',
+  incompleto: 'bg-red-500 text-white',
 };
 
 export default function WorkflowDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const [workflow, setWorkflow] = useState<PostPackWorkflow | null>(null);
+  const [workflow, setWorkflow] = useState<PostpackWorkflowRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
@@ -48,7 +48,7 @@ export default function WorkflowDetailPage() {
         [`fase_${faseAtual}_status`]: 'concluido',
         [`fase_${faseAtual}_completed_at`]: new Date().toISOString(),
         status: `fase_${prox}`,
-        [`fase_${prox}_status`]: 'em_andamento',
+        [`fase_${prox}_status`]: 'em_progresso',
         updated_at: new Date().toISOString(),
       }).eq('id', workflow.id);
       if (error) throw error;
@@ -132,8 +132,8 @@ export default function WorkflowDetailPage() {
                 const cfg = FASES_CONFIG[f.key as keyof typeof FASES_CONFIG];
                 return (
                   <div key={f.num} className="flex flex-col items-center">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold z-10 ${STATUS_COLORS[f.status]}`}>
-                      {f.status === 'concluido' ? '✓' : f.status === 'em_andamento' ? '◐' : f.num}
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold z-10 ${STATUS_COLORS[f.status as FaseStatus]}`}>
+                      {f.status === 'concluido' ? '✓' : f.status === 'em_progresso' ? '◐' : f.num}
                     </div>
                     <span className="mt-2 text-sm font-medium">{cfg.nome}</span>
                     {f.completed && <span className="text-xs text-gray-400">{new Date(f.completed).toLocaleDateString('pt-BR')}</span>}
