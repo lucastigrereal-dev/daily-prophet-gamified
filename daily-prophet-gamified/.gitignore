@@ -45,3 +45,17 @@ coverage/
 *.log
 .cache/
 .env*.local
+
+# Scripts de teste e debug (não fazer deploy)
+test-*.js
+fix-*.js
+diagnostic-*.js
+reset-*.js
+apply-*.js
+check-*.js
+create-test-data.js
+disable-email-confirmation.js
+*.sql
+EXECUTE-ESTE-SQL.txt
+SETUP-COMPLETO.md
+trigger-auto-confirm.sql
