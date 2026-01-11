@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Header } from '@/components/Header';
+import ToastContainer from '@/components/ui/ToastContainer';
 
 export const metadata: Metadata = {
   title: 'Daily Prophet Gamified',
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body>
         <Header />
+        <ToastContainer />
         {children}
       </body>
     </html>
