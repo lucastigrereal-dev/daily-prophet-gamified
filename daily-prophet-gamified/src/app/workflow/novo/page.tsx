@@ -2,23 +2,45 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/useToast';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { validateRequired } from '@/lib/validations';
 
 export default function NovoWorkflowPage() {
   const router = useRouter();
+  const { success, error: showError } = useToast();
   const [postpackSelecionado, setPostpackSelecionado] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleCriarWorkflow = () => {
-    if (!postpackSelecionado) {
-      alert('Selecione um postpack!');
+  const handleCriarWorkflow = async () => {
+    const validationError = validateRequired(postpackSelecionado, 'Postpack');
+    if (validationError) {
+      showError(validationError);
       return;
     }
 
-    // Gerar ID temporário (será substituído por ID real do Supabase)
-    const workflowId = `wf_${Date.now()}`;
+    try {
+      setLoading(true);
+      // Gerar ID temporário (será substituído por ID real do Supabase)
+      // const workflow = await createWorkflow(postpackSelecionado)
+      const workflowId = `wf_${Date.now()}`;
 
-    // Redirecionar para fase 1
-    router.push(`/workflow/${workflowId}/fase-1`);
+      success('✓ Workflow criado com sucesso!');
+      router.push(`/workflow/${workflowId}/fase-1`);
+    } catch (err) {
+      showError('Erro ao criar workflow');
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner size="lg" />
+        <p className="ml-4 text-gray-600">Carregando postpacks...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">

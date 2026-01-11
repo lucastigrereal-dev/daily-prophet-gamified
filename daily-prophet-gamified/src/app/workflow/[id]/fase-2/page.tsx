@@ -11,10 +11,13 @@ import {
   AlertaContinuarModal,
 } from '@/components/workflow';
 import { FASE_2_CONFIG } from '@/config/checklist-config';
+import { useToast } from '@/hooks/useToast';
+import LoadingPage from '@/components/ui/LoadingPage';
 
 export default function Fase2Page() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const { success, error } = useToast();
   const [workflow, setWorkflow] = useState<PostpackWorkflow | null>(null);
   const [modalItem, setModalItem] = useState<ChecklistItemConfig | null>(null);
   const [showAlerta, setShowAlerta] = useState(false);
@@ -27,34 +30,49 @@ export default function Fase2Page() {
 
   const handleConfirm = async (obs?: string) => {
     if (!workflow || !modalItem) return;
-    await workflowService.updateChecklist(workflow.id, 'fase_2', modalItem.id, {
-      status: 'concluido',
-      observacao: obs,
-    });
-    setWorkflow(await workflowService.getById(workflow.id));
-    setModalItem(null);
+    try {
+      await workflowService.updateChecklist(workflow.id, 'fase_2', modalItem.id, {
+        status: 'concluido',
+        observacao: obs,
+      });
+      setWorkflow(await workflowService.getById(workflow.id));
+      success('Checklist salvo com sucesso!');
+      setModalItem(null);
+    } catch (err) {
+      error('Erro ao salvar checklist');
+    }
   };
 
   const handleAvancar = async () => {
     if (!workflow) return;
-    const result = await workflowService.avancarFase(workflow.id, false);
-    if (!result.success && result.pendentes) {
-      setPendentes(
-        FASE_2_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
-      );
-      setShowAlerta(true);
-    } else {
-      router.push(`/workflow/${workflow.id}/fase-3`);
+    try {
+      const result = await workflowService.avancarFase(workflow.id, false);
+      if (!result.success && result.pendentes) {
+        setPendentes(
+          FASE_2_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
+        );
+        setShowAlerta(true);
+      } else {
+        success('✓ Avançado para Fase 3!');
+        router.push(`/workflow/${workflow.id}/fase-3`);
+      }
+    } catch (err) {
+      error('Erro ao avançar de fase');
     }
   };
 
   const handleContinuar = async () => {
     if (!workflow) return;
-    await workflowService.avancarFase(workflow.id, true);
-    router.push(`/workflow/${workflow.id}/fase-3`);
+    try {
+      await workflowService.avancarFase(workflow.id, true);
+      success('✓ Avançado para Fase 3!');
+      router.push(`/workflow/${workflow.id}/fase-3`);
+    } catch (err) {
+      error('Erro ao avançar de fase');
+    }
   };
 
-  if (!workflow) return <div className="p-4">Carregando...</div>;
+  if (!workflow) return <LoadingPage message="Carregando workflow..." />;
 
   return (
     <div className="min-h-screen flex flex-col">

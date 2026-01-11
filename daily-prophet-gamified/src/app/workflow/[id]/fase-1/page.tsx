@@ -2,26 +2,49 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useToast } from '@/hooks/useToast';
+import LoadingPage from '@/components/ui/LoadingPage';
 
 export default function Fase1Page() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const { success, error } = useToast();
+  const [loading, setLoading] = useState(false);
   const [checklist, setChecklist] = useState({
     item1: false,
     item2: false,
     item3: false,
   });
 
-  const handleCheckboxChange = (item: keyof typeof checklist) => {
-    setChecklist((prev) => ({
-      ...prev,
-      [item]: !prev[item],
-    }));
+  const handleCheckboxChange = async (item: keyof typeof checklist) => {
+    const newChecklist = {
+      ...checklist,
+      [item]: !checklist[item],
+    };
+    setChecklist(newChecklist);
+
+    // Simulação de salvamento - substituir por chamada real ao backend
+    try {
+      // await updateWorkflow({ fase_1_checklist: newChecklist })
+      success('Checklist salvo com sucesso!');
+    } catch (err) {
+      error('Erro ao salvar checklist');
+    }
   };
 
-  const handleAvancar = () => {
-    if (params?.id) router.push(`/workflow/${params.id}/fase-2`);
+  const handleAvancar = async () => {
+    try {
+      setLoading(true);
+      // await avancarFase()
+      success('✓ Avançado para Fase 2!');
+      if (params?.id) router.push(`/workflow/${params.id}/fase-2`);
+    } catch (err) {
+      error('Erro ao avançar de fase');
+      setLoading(false);
+    }
   };
+
+  if (loading) return <LoadingPage message="Carregando workflow..." />;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
