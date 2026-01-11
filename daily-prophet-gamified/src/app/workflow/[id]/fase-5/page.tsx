@@ -38,31 +38,46 @@ export default function Fase5Page() {
 
   const handleConfirm = async (obs?: string) => {
     if (!workflow || !modalItem) return;
-    await workflowService.updateChecklist(workflow.id, 'fase_5', modalItem.id, {
-      status: 'concluido',
-      observacao: obs,
-    });
-    setWorkflow(await workflowService.getById(workflow.id));
-    setModalItem(null);
+    try {
+      await workflowService.updateChecklist(workflow.id, 'fase_5', modalItem.id, {
+        status: 'concluido',
+        observacao: obs,
+      });
+      setWorkflow(await workflowService.getById(workflow.id));
+      success('Checklist de análise salvo!');
+      setModalItem(null);
+    } catch (err) {
+      error('Erro ao salvar checklist');
+    }
   };
 
   const handleAvancar = async () => {
     if (!workflow) return;
-    const result = await workflowService.avancarFase(workflow.id, false);
-    if (!result.success && result.pendentes) {
-      setPendentes(
-        FASE_5_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
-      );
-      setShowAlerta(true);
-    } else {
-      router.push(`/workflow/${workflow.id}/relatorio`);
+    try {
+      const result = await workflowService.avancarFase(workflow.id, false);
+      if (!result.success && result.pendentes) {
+        setPendentes(
+          FASE_5_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
+        );
+        setShowAlerta(true);
+      } else {
+        success('✓ Workflow finalizado! Redirecionando para relatório...');
+        router.push(`/workflow/${workflow.id}/relatorio`);
+      }
+    } catch (err) {
+      error('Erro ao finalizar workflow');
     }
   };
 
   const handleContinuar = async () => {
     if (!workflow) return;
-    await workflowService.avancarFase(workflow.id, true);
-    router.push(`/workflow/${workflow.id}/relatorio`);
+    try {
+      await workflowService.avancarFase(workflow.id, true);
+      success('✓ Workflow finalizado! Redirecionando para relatório...');
+      router.push(`/workflow/${workflow.id}/relatorio`);
+    } catch (err) {
+      error('Erro ao finalizar workflow');
+    }
   };
 
   const handleSaveMetrics = async () => {
