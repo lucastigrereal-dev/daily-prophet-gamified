@@ -30,14 +30,14 @@ export function ChecklistItem({
 
   return (
     <div
-      className={`flex items-center justify-between gap-3 p-3 sm:p-4 min-h-[56px] border-b ${disabled ? 'opacity-50' : ''}`}
+      className={`flex items-center justify-between p-4 border-b ${disabled ? 'opacity-50' : ''}`}
       onClick={() => !disabled && onOpenModal?.()}
     >
       <div className="flex-1">
-        <p className="font-medium text-sm sm:text-base">{config.label}</p>
-        <p className="text-xs sm:text-sm text-gray-500">{config.descricao}</p>
+        <p className="font-medium">{config.label}</p>
+        <p className="text-sm text-gray-500">{config.descricao}</p>
       </div>
-      <span className="text-xl sm:text-2xl ml-1">{icon}</span>
+      <span className="text-2xl ml-2">{icon}</span>
     </div>
   );
 }

@@ -1,99 +1,83 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { PostpackWorkflow, ChecklistItemConfig } from '@/types/workflow';
-import { workflowService } from '@/lib/workflow-service';
-import {
-  WorkflowStepper,
-  FaseChecklist,
-  ConfirmacaoModal,
-  AlertaContinuarModal,
-} from '@/components/workflow';
-import { FASE_3_CONFIG } from '@/config/checklist-config';
+import { useWorkflow } from '@/hooks/useWorkflow';
+import { ChecklistManager, ProgressBar } from '@/components/workflow';
+import { ChecklistItemConfig } from '@/types/workflow';
 
-export default function Fase3Page() {
+const FASE_3_ITEMS: ChecklistItemConfig[] = [
+  { id: 'produzir_arte', label: 'Produzir arte final', descricao: 'Criar versão final das artes', obrigatorio: true },
+  { id: 'editar_video', label: 'Editar vídeo (se aplicável)', descricao: 'Finalizar edição de vídeo', obrigatorio: false },
+  { id: 'validar_final', label: 'Validar material final', descricao: 'Conferir qualidade do material produzido', obrigatorio: true }
+];
+
+export default function Fase3PageExample() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
-  const [workflow, setWorkflow] = useState<PostpackWorkflow | null>(null);
-  const [modalItem, setModalItem] = useState<ChecklistItemConfig | null>(null);
-  const [showAlerta, setShowAlerta] = useState(false);
-  const [pendentes, setPendentes] = useState<ChecklistItemConfig[]>([]);
-  const id = params?.id;
+  const workflowId = params?.id || '';
 
-  useEffect(() => {
-    if (id) workflowService.getById(id).then(setWorkflow);
-  }, [id]);
+  const { workflow, loading, error, updateWorkflow, avancarFase, podeAvancar } = useWorkflow(workflowId);
 
-  const handleConfirm = async (obs?: string) => {
-    if (!workflow || !modalItem) return;
-    await workflowService.updateChecklist(workflow.id, 'fase_3', modalItem.id, {
-      status: 'concluido',
-      observacao: obs,
+  const handleChecklistChange = async (checklist: Record<string, any>) => {
+    if (!workflow) return;
+    await updateWorkflow({
+      fase_3: {
+        ...workflow.fase_3,
+        checklist
+      }
     });
-    setWorkflow(await workflowService.getById(workflow.id));
-    setModalItem(null);
   };
 
   const handleAvancar = async () => {
-    if (!workflow) return;
-    const result = await workflowService.avancarFase(workflow.id, false);
-    if (!result.success && result.pendentes) {
-      setPendentes(
-        FASE_3_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
-      );
-      setShowAlerta(true);
-    } else {
-      router.push(`/workflow/${workflow.id}/fase-4`);
+    if (!podeAvancar()) {
+      alert('Complete todos os itens obrigatórios antes de avançar!');
+      return;
     }
+    await avancarFase();
+    router.push(`/workflow/${workflowId}/fase-4`);
   };
 
-  const handleContinuar = async () => {
-    if (!workflow) return;
-    await workflowService.avancarFase(workflow.id, true);
-    router.push(`/workflow/${workflow.id}/fase-4`);
-  };
-
-  if (!workflow) return <div className="p-4">Carregando...</div>;
+  if (loading) return <div className="p-8 text-center">Carregando...</div>;
+  if (error) return <div className="p-8 text-center text-red-600">Erro: {error}</div>;
+  if (!workflow) return <div className="p-8 text-center">Workflow não encontrado</div>;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <WorkflowStepper currentFase="fase_3" workflow={workflow} />
-      <div className="flex-1">
-        <FaseChecklist
-          fase="fase_3"
-          config={FASE_3_CONFIG}
-          data={workflow.fase_3}
-          postpack={{
-            id: workflow.postpack_id,
-            title: '',
-            objective: '',
-            format: '',
-            status: '',
-          }}
-          onItemChange={() => {}}
-          onAvancar={handleAvancar}
-          onVoltar={() => router.push(`/workflow/${workflow.id}/fase-2`)}
-          podeAvancar={true}
-          onOpenModal={(id) =>
-            setModalItem(FASE_3_CONFIG.items.find((i) => i.id === id) || null)
-          }
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <ProgressBar currentPhase={3} />
+
+        <div className="bg-white rounded-lg shadow-md p-8 mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Fase 3 - Produção
+          </h1>
+          <p className="text-gray-600">
+            Produza o material final do conteúdo
+          </p>
+        </div>
+
+        <ChecklistManager
+          items={FASE_3_ITEMS}
+          data={workflow.fase_3.checklist}
+          onChange={handleChecklistChange}
+          autoSave={true}
         />
+
+        <div className="mt-6 flex gap-4">
+          <button
+            onClick={() => router.push(`/workflow/${workflowId}/fase-2`)}
+            className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-colors"
+          >
+            Voltar
+          </button>
+          <button
+            onClick={handleAvancar}
+            disabled={!podeAvancar()}
+            className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+          >
+            Avançar para Fase 4
+          </button>
+        </div>
       </div>
-      <ConfirmacaoModal
-        isOpen={!!modalItem}
-        onClose={() => setModalItem(null)}
-        onConfirm={handleConfirm}
-        item={modalItem}
-      />
-      <AlertaContinuarModal
-        isOpen={showAlerta}
-        onClose={() => setShowAlerta(false)}
-        onVoltar={() => setShowAlerta(false)}
-        onContinuar={handleContinuar}
-        itensPendentes={pendentes}
-        fase="fase_3"
-      />
     </div>
   );
 }

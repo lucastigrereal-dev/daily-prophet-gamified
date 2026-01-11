@@ -19,16 +19,16 @@ export function WorkflowStepper({ currentFase, workflow, onFaseClick }: Props) {
   };
 
   return (
-    <div className="px-1 sm:px-2 py-3 sm:py-4 overflow-x-auto sm:overflow-visible">
-      <div className="flex items-center w-full min-w-[420px] sm:min-w-0">
+    <div className="flex items-center justify-between px-2 py-4">
+      <div className="flex items-center w-full">
         {FASES_ORDEM.map((fase, i) => (
           <div key={fase} className="flex items-center flex-1">
             <button
               onClick={() => onFaseClick?.(fase)}
-              className="flex flex-col items-center px-2 py-2 min-h-[44px]"
+              className="flex flex-col items-center"
             >
-              <span className="text-xl sm:text-2xl">{getStatus(fase)}</span>
-              <span className="text-[11px] sm:text-xs mt-1 text-center">
+              <span className="text-2xl">{getStatus(fase)}</span>
+              <span className="text-xs mt-1 text-center">
                 {FASES_CONFIG[fase].nome}
               </span>
             </button>

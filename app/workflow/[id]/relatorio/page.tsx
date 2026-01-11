@@ -20,13 +20,15 @@ export default function RelatorioPage() {
   return (
     <RelatorioFinal
       workflow={workflow}
-      postpack={{
-        id: workflow.postpack_id,
-        title: '',
-        objective: '',
-        format: '',
-        status: '',
-      }}
+      postpack={
+        workflow.postpack || {
+          id: workflow.postpack_id,
+          title: `Postpack ${workflow.postpack_id}`,
+          objective: 'Informações não disponíveis',
+          format: 'N/A',
+          status: 'N/A',
+        }
+      }
     />
   );
 }

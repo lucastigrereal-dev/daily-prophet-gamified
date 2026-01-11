@@ -5,13 +5,20 @@ export type WorkflowStatus = FaseNumero | 'concluido';
 export type FaseStatus = 'pendente' | 'em_progresso' | 'concluido' | 'incompleto';
 export type ChecklistItemStatus = 'pendente' | 'concluido' | 'pulado' | 'na';
 
-export interface PostpackResumo {
+// Interface completa do Postpack para binding
+export interface Postpack {
   id: string;
   title: string;
   objective: string;
   format: string;
   status: string;
+  content?: any;
+  created_at?: string;
+  updated_at?: string;
 }
+
+// Alias para compatibilidade
+export type PostpackResumo = Postpack;
 
 export interface Metricas24h {
   views?: number;
@@ -56,6 +63,7 @@ export interface FaseData {
 export interface PostpackWorkflow {
   id: string;
   postpack_id: string;
+  postpack?: Postpack; // Dados completos do postpack (JOIN)
   status: WorkflowStatus;
   created_by?: string;
   approved_by?: string;
@@ -77,6 +85,7 @@ export interface PostpackWorkflow {
 export interface PostpackWorkflowRow {
   id: string;
   postpack_id: string;
+  postpacks?: Postpack; // JOIN result (Supabase retorna singular)
   status: string;
   created_by?: string;
   approved_by?: string;
@@ -109,6 +118,7 @@ export interface PostpackWorkflowRow {
   fase_5_checklist: Record<string, ChecklistItemData>;
   fase_5_started_at?: string;
   fase_5_completed_at?: string;
+  fase_5_metricas?: any;
 }
 
 export interface CreateWorkflowInput {
@@ -124,6 +134,3 @@ export interface WorkflowFilters {
   created_before?: string;
   limit?: number;
 }
-
-// Alias para compatibilidade
-export type PostPackWorkflow = PostpackWorkflow;

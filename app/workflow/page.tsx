@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import type { PostPackWorkflow } from '@/types/workflow';
+import { workflowService } from '@/lib/workflow-service';
+import type { PostpackWorkflow } from '@/types/workflow';
 
 const STATUS_LABELS: Record<string, string> = {
   fase_1: 'Fase 1 - Criacao',
@@ -25,7 +25,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function WorkflowListPage() {
   const router = useRouter();
-  const [workflows, setWorkflows] = useState<PostPackWorkflow[]>([]);
+  const [workflows, setWorkflows] = useState<PostpackWorkflow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({ total: 0, emAndamento: 0, concluidos: 0 });
@@ -37,12 +37,7 @@ export default function WorkflowListPage() {
   async function loadWorkflows() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('postpack_workflow')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await workflowService.list();
       setWorkflows(data || []);
       const total = data?.length || 0;
       const concluidos = data?.filter(w => w.status === 'concluido').length || 0;

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/client';
 import {
   PostpackWorkflow,
   PostpackWorkflowRow,
+  Metricas24h,
   FaseNumero,
   ChecklistItemData,
   WorkflowFilters,
@@ -25,7 +26,7 @@ export const supabaseWorkflow = {
   async selectById(id: string): Promise<PostpackWorkflowRow | null> {
     const { data, error } = await getClient()
       .from('postpack_workflow')
-      .select('*')
+      .select('*, postpacks(*)')
       .eq('id', id)
       .single();
     if (error && error.code !== 'PGRST116') throw error;
@@ -35,7 +36,7 @@ export const supabaseWorkflow = {
   async selectByPostpack(postpackId: string): Promise<PostpackWorkflowRow | null> {
     const { data, error } = await getClient()
       .from('postpack_workflow')
-      .select('*')
+      .select('*, postpacks(*)')
       .eq('postpack_id', postpackId)
       .single();
     if (error && error.code !== 'PGRST116') throw error;
@@ -43,7 +44,7 @@ export const supabaseWorkflow = {
   },
 
   async selectMany(filters?: WorkflowFilters): Promise<PostpackWorkflowRow[]> {
-    let query = getClient().from('postpack_workflow').select('*');
+    let query = getClient().from('postpack_workflow').select('*, postpacks(*)');
     if (filters?.status) query = query.in('status', filters.status);
     if (filters?.created_after) query = query.gte('created_at', filters.created_after);
     if (filters?.created_before) query = query.lte('created_at', filters.created_before);
@@ -83,10 +84,30 @@ export const supabaseWorkflow = {
     await this.update(id, { [checklistField]: updatedChecklist } as any);
   },
 
+  async updateMetrics(
+    id: string,
+    metricas24h: Metricas24h,
+    metricas7d: Metricas24h
+  ): Promise<PostpackWorkflowRow> {
+    const current = await this.selectById(id);
+    if (!current) throw new Error('Workflow nao encontrado');
+
+    const { data: row, error } = await getClient()
+      .from('postpack_workflow')
+      .update({ metricas_24h: metricas24h, metricas_7d: metricas7d })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return row;
+  },
+
   rowToWorkflow(row: PostpackWorkflowRow): PostpackWorkflow {
     return {
       id: row.id,
       postpack_id: row.postpack_id,
+      postpack: row.postpacks || undefined, // Inclui dados do JOIN
       status: row.status as WorkflowStatus,
       created_at: row.created_at,
       updated_at: row.updated_at,
