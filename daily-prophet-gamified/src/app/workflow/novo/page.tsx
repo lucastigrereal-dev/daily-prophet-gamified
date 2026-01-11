@@ -1,62 +1,59 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { workflowService } from '@/lib/workflow-service';
-import { createClient } from '@/lib/supabase/client';
 
 export default function NovoWorkflowPage() {
   const router = useRouter();
-  const [postpacks, setPostpacks] = useState<any[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [postpackSelecionado, setPostpackSelecionado] = useState('');
 
-  useEffect(() => {
-    createClient()
-      .from('postpacks')
-      .select('*')
-      .in('status', ['draft', 'pending_approval'])
-      .then(({ data }) => setPostpacks(data || []));
-  }, []);
+  const handleCriarWorkflow = () => {
+    if (!postpackSelecionado) {
+      alert('Selecione um postpack!');
+      return;
+    }
 
-  const handleCreate = async () => {
-    if (!selected) return;
-    setLoading(true);
-    const wf = await workflowService.create({ postpack_id: selected });
-    router.push(`/workflow/${wf.id}/fase-1`);
+    // Gerar ID temporário (será substituído por ID real do Supabase)
+    const workflowId = `wf_${Date.now()}`;
+
+    // Redirecionar para fase 1
+    router.push(`/workflow/${workflowId}/fase-1`);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <button onClick={() => router.back()} className="mb-4">
-        ← Voltar
-      </button>
-      <h1 className="text-2xl font-bold mb-4">Novo Workflow</h1>
-      <div className="space-y-2">
-        {postpacks.map((p) => (
-          <div
-            key={p.id}
-            onClick={() => setSelected(p.id)}
-            className={`p-4 rounded-lg border-2 cursor-pointer ${
-              selected === p.id
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 bg-white'
-            }`}
-          >
-            <p className="font-medium">{p.title}</p>
-            <p className="text-sm text-gray-500">
-              {p.format} • {p.objective}
-            </p>
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Criar Novo Workflow
+          </h1>
+
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Selecione o Postpack
+              </label>
+              <select
+                value={postpackSelecionado}
+                onChange={(e) => setPostpackSelecionado(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              >
+                <option value="">-- Escolha um postpack --</option>
+                <option value="postpack-1">Postpack 1</option>
+                <option value="postpack-2">Postpack 2</option>
+                <option value="postpack-3">Postpack 3</option>
+              </select>
+            </div>
+
+            <button
+              onClick={handleCriarWorkflow}
+              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+            >
+              Criar Workflow
+            </button>
           </div>
-        ))}
+        </div>
       </div>
-      <button
-        onClick={handleCreate}
-        disabled={!selected || loading}
-        className="w-full mt-4 py-3 bg-green-500 text-white rounded-lg disabled:opacity-50"
-      >
-        {loading ? 'Criando...' : 'Iniciar Workflow'}
-      </button>
     </div>
   );
 }

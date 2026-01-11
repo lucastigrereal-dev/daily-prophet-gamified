@@ -1,0 +1,130 @@
+========================================================================
+DAILY PROPHET - DEPLOY NO VERCEL VIA ZIP
+========================================================================
+
+✅ ZIP CRIADO COM SUCESSO!
+
+Arquivo: daily-prophet-deploy.zip
+Tamanho: 62 KB
+Local: C:\Users\lucas\daily-prophet-gamified\daily-prophet-deploy.zip
+
+========================================================================
+PASSO A PASSO PARA FAZER DEPLOY:
+========================================================================
+
+PASSO 1: Acessar Vercel
+------------------------
+1. Abra seu navegador
+2. Acesse: https://vercel.com/new
+3. Faça login (ou crie conta grátis)
+   - Pode usar GitHub, GitLab, Bitbucket ou Email
+
+PASSO 2: Upload do ZIP
+-----------------------
+1. Na página do Vercel, você verá "Import Git Repository"
+2. Procure a opção "Upload" ou "Browse"
+3. Clique e selecione o arquivo: daily-prophet-deploy.zip
+4. OU arraste o arquivo para a página
+
+PASSO 3: Configurar Projeto
+----------------------------
+1. Project Name: daily-prophet-gamified (ou outro nome que preferir)
+2. Framework Preset: Next.js (deve detectar automaticamente)
+3. Root Directory: ./ (deixar padrão)
+4. Build Command: deixar vazio (usa o padrão)
+5. Output Directory: deixar vazio (usa .next)
+
+PASSO 4: Adicionar Variáveis de Ambiente ⚠️ IMPORTANTE!
+--------------------------------------------------------
+Na seção "Environment Variables", adicione estas 2 variáveis:
+
+1. Variável 1:
+   Nome: NEXT_PUBLIC_SUPABASE_URL
+   Valor: https://damxbdkteskryonvgvpc.supabase.co
+
+2. Variável 2:
+   Nome: NEXT_PUBLIC_SUPABASE_ANON_KEY
+   Valor: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhbXhiZGt0ZXNrcnlvbnZndnBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4ODY2OTEsImV4cCI6MjA4MjQ2MjY5MX0.cU2B2Qcwzt5DiRxzeicw68_NWfa2oh1nO3E4e5TPDus
+
+3. Clique "Add" para cada variável
+
+PASSO 5: Deploy!
+-----------------
+1. Clique no botão "Deploy"
+2. Aguarde 1-2 minutos (Vercel faz o build)
+3. Quando terminar, aparecerá: "Congratulations!"
+4. Clique em "Visit" para ver seu app no ar! 🎉
+
+========================================================================
+APÓS O DEPLOY - CONFIGURAR SUPABASE
+========================================================================
+
+PASSO 6: Atualizar URLs no Supabase
+------------------------------------
+1. Copie a URL do seu app (ex: https://daily-prophet-xxx.vercel.app)
+2. Acesse: https://app.supabase.com/project/damxbdkteskryonvgvpc/auth/url-configuration
+3. Em "Site URL", cole a URL do Vercel
+4. Em "Redirect URLs", adicione: https://daily-prophet-xxx.vercel.app/**
+5. Clique "Save"
+
+PASSO 7: Testar o App
+----------------------
+1. Acesse a URL do Vercel
+2. Vá para /signup
+3. Crie um novo usuário
+4. Deve fazer login automaticamente
+5. Teste criar um workflow
+6. Se tudo funcionar: DEPLOY CONCLUÍDO! ✅
+
+========================================================================
+TROUBLESHOOTING
+========================================================================
+
+Problema: Build falhou
+Solução: Verifique se as variáveis de ambiente foram adicionadas
+
+Problema: Página em branco
+Solução: Abra o Console (F12) e veja os erros. Provavelmente variáveis
+         de ambiente não foram configuradas.
+
+Problema: Login não funciona
+Solução: Verifique se atualizou as URLs no Supabase (Passo 6)
+
+Problema: "Module not found"
+Solução: Isso é normal. O Vercel instala as dependências automaticamente.
+
+========================================================================
+SUPORTE
+========================================================================
+
+Se algo der errado:
+1. Tire print da tela de erro
+2. Me envie o erro
+3. Vou te ajudar a resolver!
+
+========================================================================
+ARQUIVOS INCLUÍDOS NO ZIP:
+========================================================================
+
+✅ src/ (código-fonte completo)
+✅ package.json (dependências)
+✅ package-lock.json (versões exatas)
+✅ next.config.js (configuração Next.js)
+✅ tsconfig.json (configuração TypeScript)
+✅ tailwind.config.js (configuração Tailwind)
+✅ postcss.config.js (configuração PostCSS)
+✅ vercel.json (configuração Vercel)
+✅ README.md (documentação)
+✅ .gitignore (arquivos ignorados)
+
+🚫 NÃO incluído (por segurança):
+❌ .env.local (configurado via variáveis de ambiente no Vercel)
+❌ node_modules/ (Vercel instala automaticamente)
+❌ .next/ (Vercel gera no build)
+❌ Scripts de teste (não necessários em produção)
+
+========================================================================
+BOA SORTE COM O DEPLOY! 🚀
+========================================================================
+
+Desenvolvido com Next.js 14, Supabase, TypeScript e TailwindCSS

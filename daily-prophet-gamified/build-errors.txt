@@ -1,0 +1,74 @@
+
+> daily-prophet-gamified@1.0.0 build
+> next build
+
+  ▲ Next.js 14.2.5
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/10) ...
+   Generating static pages (2/10) 
+Error: useAuth must be used within an AuthProvider
+    at i (C:\Users\lucas\daily-prophet-gamified\.next\server\app\login\page.js:1:5223)
+    at l (C:\Users\lucas\daily-prophet-gamified\.next\server\app\login\page.js:1:2504)
+    at nj (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:60046)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717) {
+  digest: '2894211620'
+}
+
+Error occurred prerendering page "/login". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: useAuth must be used within an AuthProvider
+    at i (C:\Users\lucas\daily-prophet-gamified\.next\server\app\login\page.js:1:5223)
+    at l (C:\Users\lucas\daily-prophet-gamified\.next\server\app\login\page.js:1:2504)
+    at nj (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:60046)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717)
+   Generating static pages (4/10) 
+Error: useAuth must be used within an AuthProvider
+    at i (C:\Users\lucas\daily-prophet-gamified\.next\server\app\signup\page.js:1:5843)
+    at l (C:\Users\lucas\daily-prophet-gamified\.next\server\app\signup\page.js:1:2561)
+    at nj (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538) {
+  digest: '2091188111'
+}
+   Generating static pages (7/10) 
+
+Error occurred prerendering page "/signup". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: useAuth must be used within an AuthProvider
+    at i (C:\Users\lucas\daily-prophet-gamified\.next\server\app\signup\page.js:1:5843)
+    at l (C:\Users\lucas\daily-prophet-gamified\.next\server\app\signup\page.js:1:2561)
+    at nj (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717)
+    at nM (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (C:\Users\lucas\daily-prophet-gamified\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+ ✓ Generating static pages (10/10)
+
+> Export encountered errors on following paths:
+	/login/page: /login
+	/signup/page: /signup
