@@ -11,10 +11,13 @@ import {
   AlertaContinuarModal,
 } from '@/components/workflow';
 import { FASE_3_CONFIG } from '@/config/checklist-config';
+import { useToast } from '@/hooks/useToast';
+import LoadingPage from '@/components/ui/LoadingPage';
 
 export default function Fase3Page() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const { success, error: showError } = useToast();
   const [workflow, setWorkflow] = useState<PostpackWorkflow | null>(null);
   const [modalItem, setModalItem] = useState<ChecklistItemConfig | null>(null);
   const [showAlerta, setShowAlerta] = useState(false);
@@ -27,12 +30,17 @@ export default function Fase3Page() {
 
   const handleConfirm = async (obs?: string) => {
     if (!workflow || !modalItem) return;
-    await workflowService.updateChecklist(workflow.id, 'fase_3', modalItem.id, {
-      status: 'concluido',
-      observacao: obs,
-    });
-    setWorkflow(await workflowService.getById(workflow.id));
-    setModalItem(null);
+    try {
+      await workflowService.updateChecklist(workflow.id, 'fase_3', modalItem.id, {
+        status: 'concluido',
+        observacao: obs,
+      });
+      setWorkflow(await workflowService.getById(workflow.id));
+      setModalItem(null);
+      success('Checklist de produção salvo!');
+    } catch (err) {
+      showError('Erro ao salvar checklist');
+    }
   };
 
   const handleAvancar = async () => {
@@ -44,6 +52,7 @@ export default function Fase3Page() {
       );
       setShowAlerta(true);
     } else {
+      success('✓ Pronto para publicação!');
       router.push(`/workflow/${workflow.id}/fase-4`);
     }
   };
@@ -54,7 +63,7 @@ export default function Fase3Page() {
     router.push(`/workflow/${workflow.id}/fase-4`);
   };
 
-  if (!workflow) return <div className="p-4">Carregando...</div>;
+  if (!workflow) return <LoadingPage />;
 
   return (
     <div className="min-h-screen flex flex-col">

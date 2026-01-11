@@ -11,14 +11,19 @@ import {
   AlertaContinuarModal,
 } from '@/components/workflow';
 import { FASE_4_CONFIG } from '@/config/checklist-config';
+import { useToast } from '@/hooks/useToast';
+import LoadingPage from '@/components/ui/LoadingPage';
+import { validateUrl } from '@/lib/validations';
 
 export default function Fase4Page() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const { success, error: showError } = useToast();
   const [workflow, setWorkflow] = useState<PostpackWorkflow | null>(null);
   const [modalItem, setModalItem] = useState<ChecklistItemConfig | null>(null);
   const [showAlerta, setShowAlerta] = useState(false);
   const [pendentes, setPendentes] = useState<ChecklistItemConfig[]>([]);
+  const [publishUrl, setPublishUrl] = useState('');
   const id = params?.id;
 
   useEffect(() => {
@@ -54,12 +59,53 @@ export default function Fase4Page() {
     router.push(`/workflow/${workflow.id}/fase-5`);
   };
 
-  if (!workflow) return <div className="p-4">Carregando...</div>;
+  const handleSavePublishUrl = async () => {
+    if (!workflow) return;
+
+    const error = validateUrl(publishUrl);
+    if (error) {
+      showError(error);
+      return;
+    }
+
+    try {
+      await workflowService.update(workflow.id, {
+        fase_4_published_url: publishUrl,
+        fase_4_published_at: new Date().toISOString(),
+      });
+      setWorkflow(await workflowService.getById(workflow.id));
+      success('✓ URL de publicação salva!');
+    } catch (err) {
+      showError('Erro ao salvar URL');
+    }
+  };
+
+  if (!workflow) return <LoadingPage />;
 
   return (
     <div className="min-h-screen flex flex-col">
       <WorkflowStepper currentFase="fase_4" workflow={workflow} />
       <div className="flex-1">
+        <div className="max-w-4xl mx-auto p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">URL de Publicação</h2>
+            <div className="space-y-4">
+              <input
+                type="url"
+                value={publishUrl}
+                onChange={(e) => setPublishUrl(e.target.value)}
+                placeholder="https://instagram.com/p/..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleSavePublishUrl}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Salvar URL de Publicação
+              </button>
+            </div>
+          </div>
+        </div>
         <FaseChecklist
           fase="fase_4"
           config={FASE_4_CONFIG}
