@@ -32,6 +32,11 @@ export const workflowService = {
     return rows.map(supabaseWorkflow.rowToWorkflow);
   },
 
+  async update(workflowId: string, data: Partial<PostpackWorkflowRow>): Promise<PostpackWorkflow> {
+    const row = await supabaseWorkflow.update(workflowId, data);
+    return supabaseWorkflow.rowToWorkflow(row);
+  },
+
   async updateChecklist(workflowId: string, fase: FaseNumero, itemId: string, data: Partial<ChecklistItemData>): Promise<void> {
     const itemData = { ...data, id: itemId, timestamp: new Date().toISOString() };
     await supabaseWorkflow.updateChecklistItem(workflowId, fase, itemId, itemData);
