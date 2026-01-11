@@ -8,7 +8,7 @@ import {
   ChecklistItemData,
 } from '@/types/workflow';
 import { ChecklistItem } from './ChecklistItem';
-import { ProgressBar } from './ProgressBar';
+import ProgressIndicator from './ProgressIndicator';
 
 interface Props {
   fase: FaseNumero;
@@ -49,7 +49,7 @@ export function FaseChecklist({
         </h2>
         <p className="text-gray-600">{config.descricao}</p>
         <div className="mt-2">
-          <ProgressBar progress={progress} />
+          <ProgressIndicator progress={progress} />
           <p className="text-sm text-right mt-1">{progress}%</p>
         </div>
       </div>
