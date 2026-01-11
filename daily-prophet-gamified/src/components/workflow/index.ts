@@ -8,3 +8,7 @@ export * from './RelatorioFinal';
 export * from './PostpackInfo';
 export * from './MetricsForm';
 export * from './MetricsDisplay';
+
+// Sprint 2 - New Components
+export { default as ChecklistManager } from './ChecklistManager';
+export { default as ProgressBar } from './ProgressBar';
