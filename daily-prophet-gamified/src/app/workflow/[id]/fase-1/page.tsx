@@ -20,7 +20,7 @@ export default function Fase1Page() {
   };
 
   const handleAvancar = () => {
-    router.push(`/workflow/${params.id}/fase-2`);
+    if (params?.id) router.push(`/workflow/${params.id}/fase-2`);
   };
 
   return (
