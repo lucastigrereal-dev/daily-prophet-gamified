@@ -173,6 +173,12 @@ export default function Home() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showStats, setShowStats] = useState(true);
 
+  // Estados de Protocolos (Etapa 6)
+  const [mostrarProtocolos, setMostrarProtocolos] = useState(false);
+  const [protocolosMarcados, setProtocolosMarcados] = useState<string[]>([]);
+  const [sugestaoUsuario, setSugestaoUsuario] = useState('');
+  const [salvando, setSalvando] = useState(false);
+
   // ============================================
   // EFEITOS
   // ============================================
@@ -282,6 +288,13 @@ export default function Home() {
     ).slice(0, 10);
   };
 
+  const getProtocolosFiltrados = (pilar: string) => {
+    if (!pilar) return protocols;
+    return protocols.filter(protocol =>
+      protocol.category?.toLowerCase() === pilar.toLowerCase()
+    );
+  };
+
   // ============================================
   // FUNÇÕES AUXILIARES
   // ============================================
@@ -318,6 +331,68 @@ export default function Home() {
       }
     } catch {
       alert('Copiado!');
+    }
+  };
+
+  const salvarPostpack = async () => {
+    if (!selectedPost) return;
+
+    try {
+      setSalvando(true);
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!url || !key) {
+        alert('Configuracao do Supabase nao encontrada');
+        return;
+      }
+
+      const headers = {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation'
+      };
+
+      // Criar postpack no banco
+      const postpackData = {
+        name: selectedPost.titulo,
+        description: buildPostPack(),
+        pilar: selectedPost.pilar,
+        formato: selectedPost.formato,
+        protocolos_marcados: protocolosMarcados,
+        sugestao_usuario: sugestaoUsuario,
+        hook: hookEditado,
+        legenda: legendaEditada,
+        cta: ctaSelecionada,
+        hashtags: hashtagsSelecionadas
+      };
+
+      const response = await fetch(`${url}/rest/v1/postpacks`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(postpackData)
+      });
+
+      if (response.ok) {
+        alert('✅ PostPack salvo com sucesso!');
+        // Resetar estados
+        setModo('biblioteca');
+        setEtapaMontador(1);
+        setSelectedPost(null);
+        setMostrarProtocolos(false);
+        setProtocolosMarcados([]);
+        setSugestaoUsuario('');
+      } else {
+        const error = await response.json();
+        console.error('Erro ao salvar:', error);
+        alert('Erro ao salvar PostPack. Verifique o console.');
+      }
+    } catch (err) {
+      console.error('Erro ao salvar postpack:', err);
+      alert('Erro ao salvar PostPack');
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -710,7 +785,7 @@ export default function Home() {
 
             {/* Info do post */}
             {selectedPost && (
-              <div className="bg-gray-700/50 rounded-lg p-4 text-sm text-gray-400">
+              <div className="bg-gray-700/50 rounded-lg p-4 text-sm text-gray-400 mb-6">
                 <div className="flex items-center gap-4 flex-wrap">
                   <span>{FORMATO_ICONS[selectedPost.formato]} {selectedPost.formato}</span>
                   <span>{PILAR_ICONS[selectedPost.pilar]} {selectedPost.pilar}</span>
@@ -719,23 +794,103 @@ export default function Home() {
               </div>
             )}
 
+            {/* PAINEL DE PROTOCOLOS */}
+            {mostrarProtocolos && selectedPost && (() => {
+              const protocolosFiltrados = getProtocolosFiltrados(selectedPost.pilar);
+              return (
+                <div className="border-t border-gray-700 pt-6 mt-6">
+                  <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                    📋 Protocolos ({selectedPost.pilar})
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4">
+                    Marque os protocolos que você seguiu ao criar este post:
+                  </p>
+
+                  {/* Lista de protocolos */}
+                  {protocolosFiltrados.length > 0 ? (
+                    <div className="space-y-2 mb-6 max-h-64 overflow-y-auto">
+                      {protocolosFiltrados.map((protocol) => (
+                        <label
+                          key={protocol.id}
+                          className="flex items-start gap-3 p-3 bg-gray-700 rounded-lg hover:bg-gray-600 cursor-pointer transition-all"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={protocolosMarcados.includes(protocol.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setProtocolosMarcados([...protocolosMarcados, protocol.id]);
+                              } else {
+                                setProtocolosMarcados(protocolosMarcados.filter(id => id !== protocol.id));
+                              }
+                            }}
+                            className="mt-1 w-5 h-5 rounded border-gray-500 text-purple-600 focus:ring-purple-500"
+                          />
+                          <div className="flex-1">
+                            <div className="text-white font-medium">{protocol.name}</div>
+                            <div className="text-gray-400 text-sm">{protocol.description}</div>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-gray-700 rounded-lg p-4 text-gray-400 text-center mb-6">
+                      Nenhum protocolo encontrado para o pilar "{selectedPost.pilar}"
+                    </div>
+                  )}
+
+                  {/* Caixinha de sugestão */}
+                  <div className="mb-6">
+                    <label className="text-white font-medium mb-2 block flex items-center gap-2">
+                      💡 Sua sugestão ou observação:
+                    </label>
+                    <textarea
+                      value={sugestaoUsuario}
+                      onChange={(e) => setSugestaoUsuario(e.target.value)}
+                      placeholder="Adicione sua sugestão ou observação sobre este post..."
+                      className="w-full h-24 bg-gray-700 text-white rounded-lg p-4 border border-gray-600 focus:border-purple-500 focus:outline-none resize-none"
+                    />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Botoes de ação */}
             <div className="mt-6 flex justify-between">
               <button
-                onClick={() => setEtapaMontador(5)}
-                className="px-6 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-white"
-              >
-                ← Voltar
-              </button>
-              <button
                 onClick={() => {
-                  setModo('biblioteca');
-                  setEtapaMontador(1);
-                  setSelectedPost(null);
+                  if (mostrarProtocolos) {
+                    setMostrarProtocolos(false);
+                  } else {
+                    setEtapaMontador(5);
+                  }
                 }}
-                className="px-6 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold"
+                className="px-6 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-white"
+                disabled={salvando}
               >
-                ✓ Concluir
+                ← Voltar e Editar
               </button>
+
+              {!mostrarProtocolos ? (
+                <button
+                  onClick={() => setMostrarProtocolos(true)}
+                  className="px-6 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold"
+                >
+                  Continuar →
+                </button>
+              ) : (
+                <button
+                  onClick={salvarPostpack}
+                  disabled={salvando}
+                  className={`px-6 py-3 rounded-lg font-bold text-white ${
+                    salvando
+                      ? 'bg-gray-600 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
+                >
+                  {salvando ? '⏳ Salvando...' : '✓ Salvar PostPack'}
+                </button>
+              )}
             </div>
           </div>
         )}
