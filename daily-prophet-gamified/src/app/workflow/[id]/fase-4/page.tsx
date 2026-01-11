@@ -32,31 +32,46 @@ export default function Fase4Page() {
 
   const handleConfirm = async (obs?: string) => {
     if (!workflow || !modalItem) return;
-    await workflowService.updateChecklist(workflow.id, 'fase_4', modalItem.id, {
-      status: 'concluido',
-      observacao: obs,
-    });
-    setWorkflow(await workflowService.getById(workflow.id));
-    setModalItem(null);
+    try {
+      await workflowService.updateChecklist(workflow.id, 'fase_4', modalItem.id, {
+        status: 'concluido',
+        observacao: obs,
+      });
+      setWorkflow(await workflowService.getById(workflow.id));
+      success('Checklist de publicação salvo!');
+      setModalItem(null);
+    } catch (err) {
+      showError('Erro ao salvar checklist');
+    }
   };
 
   const handleAvancar = async () => {
     if (!workflow) return;
-    const result = await workflowService.avancarFase(workflow.id, false);
-    if (!result.success && result.pendentes) {
-      setPendentes(
-        FASE_4_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
-      );
-      setShowAlerta(true);
-    } else {
-      router.push(`/workflow/${workflow.id}/fase-5`);
+    try {
+      const result = await workflowService.avancarFase(workflow.id, false);
+      if (!result.success && result.pendentes) {
+        setPendentes(
+          FASE_4_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
+        );
+        setShowAlerta(true);
+      } else {
+        success('✓ Avançado para Fase 5!');
+        router.push(`/workflow/${workflow.id}/fase-5`);
+      }
+    } catch (err) {
+      showError('Erro ao avançar de fase');
     }
   };
 
   const handleContinuar = async () => {
     if (!workflow) return;
-    await workflowService.avancarFase(workflow.id, true);
-    router.push(`/workflow/${workflow.id}/fase-5`);
+    try {
+      await workflowService.avancarFase(workflow.id, true);
+      success('✓ Avançado para Fase 5!');
+      router.push(`/workflow/${workflow.id}/fase-5`);
+    } catch (err) {
+      showError('Erro ao avançar de fase');
+    }
   };
 
   const handleSavePublishUrl = async () => {
