@@ -1,99 +1,85 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { PostpackWorkflow, ChecklistItemConfig } from '@/types/workflow';
-import { workflowService } from '@/lib/workflow-service';
-import {
-  WorkflowStepper,
-  FaseChecklist,
-  ConfirmacaoModal,
-  AlertaContinuarModal,
-} from '@/components/workflow';
-import { FASE_1_CONFIG } from '@/config/checklist-config';
 
 export default function Fase1Page() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
-  const [workflow, setWorkflow] = useState<PostpackWorkflow | null>(null);
-  const [modalItem, setModalItem] = useState<ChecklistItemConfig | null>(null);
-  const [showAlerta, setShowAlerta] = useState(false);
-  const [pendentes, setPendentes] = useState<ChecklistItemConfig[]>([]);
-  const id = params?.id;
+  const [checklist, setChecklist] = useState({
+    item1: false,
+    item2: false,
+    item3: false,
+  });
 
-  useEffect(() => {
-    if (id) workflowService.getById(id).then(setWorkflow);
-  }, [id]);
-
-  const handleConfirm = async (obs?: string) => {
-    if (!workflow || !modalItem) return;
-    await workflowService.updateChecklist(workflow.id, 'fase_1', modalItem.id, {
-      status: 'concluido',
-      observacao: obs,
-    });
-    setWorkflow(await workflowService.getById(workflow.id));
-    setModalItem(null);
+  const handleCheckboxChange = (item: keyof typeof checklist) => {
+    setChecklist((prev) => ({
+      ...prev,
+      [item]: !prev[item],
+    }));
   };
 
-  const handleAvancar = async () => {
-    if (!workflow) return;
-    const result = await workflowService.avancarFase(workflow.id, false);
-    if (!result.success && result.pendentes) {
-      setPendentes(
-        FASE_1_CONFIG.items.filter((i) => result.pendentes!.includes(i.id))
-      );
-      setShowAlerta(true);
-    } else {
-      router.push(`/workflow/${workflow.id}/fase-2`);
-    }
+  const handleAvancar = () => {
+    router.push(`/workflow/${params.id}/fase-2`);
   };
-
-  const handleContinuar = async () => {
-    if (!workflow) return;
-    await workflowService.avancarFase(workflow.id, true);
-    router.push(`/workflow/${workflow.id}/fase-2`);
-  };
-
-  if (!workflow) return <div className="p-4">Carregando...</div>;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <WorkflowStepper currentFase="fase_1" workflow={workflow} />
-      <div className="flex-1">
-        <FaseChecklist
-          fase="fase_1"
-          config={FASE_1_CONFIG}
-          data={workflow.fase_1}
-          postpack={{
-            id: workflow.postpack_id,
-            title: '',
-            objective: '',
-            format: '',
-            status: '',
-          }}
-          onItemChange={() => {}}
-          onAvancar={handleAvancar}
-          onVoltar={() => router.push(`/workflow/${workflow.id}`)}
-          podeAvancar={true}
-          onOpenModal={(id) =>
-            setModalItem(FASE_1_CONFIG.items.find((i) => i.id === id) || null)
-          }
-        />
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Fase 1 - Criação
+          </h1>
+
+          <div className="space-y-4 mb-8">
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="item1"
+                checked={checklist.item1}
+                onChange={() => handleCheckboxChange('item1')}
+                className="mt-1 h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <label htmlFor="item1" className="text-gray-700 cursor-pointer">
+                Item 1: Definir objetivo do postpack
+              </label>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="item2"
+                checked={checklist.item2}
+                onChange={() => handleCheckboxChange('item2')}
+                className="mt-1 h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <label htmlFor="item2" className="text-gray-700 cursor-pointer">
+                Item 2: Escolher formato do conteúdo
+              </label>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="item3"
+                checked={checklist.item3}
+                onChange={() => handleCheckboxChange('item3')}
+                className="mt-1 h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <label htmlFor="item3" className="text-gray-700 cursor-pointer">
+                Item 3: Revisar informações básicas
+              </label>
+            </div>
+          </div>
+
+          <button
+            onClick={handleAvancar}
+            className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+          >
+            Avançar para Fase 2
+          </button>
+        </div>
       </div>
-      <ConfirmacaoModal
-        isOpen={!!modalItem}
-        onClose={() => setModalItem(null)}
-        onConfirm={handleConfirm}
-        item={modalItem}
-      />
-      <AlertaContinuarModal
-        isOpen={showAlerta}
-        onClose={() => setShowAlerta(false)}
-        onVoltar={() => setShowAlerta(false)}
-        onContinuar={handleContinuar}
-        itensPendentes={pendentes}
-        fase="fase_1"
-      />
     </div>
   );
 }

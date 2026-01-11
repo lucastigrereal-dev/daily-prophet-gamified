@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { Header } from '@/components/Header';
 
 export const metadata: Metadata = {
   title: 'Daily Prophet Gamified',
@@ -15,9 +15,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <Header />
+        {children}
       </body>
     </html>
   );
