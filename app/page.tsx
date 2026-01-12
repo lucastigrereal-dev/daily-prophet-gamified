@@ -77,6 +77,18 @@ interface Protocol {
 }
 
 // ============================================
+// TIPOS DE LEGENDA
+// ============================================
+const TIPOS_LEGENDA = [
+  { code: 'todos', label: '📋 Todos' },
+  { code: 'abertura', label: '🎬 Abertura' },
+  { code: 'meio_eeat', label: '👑 E-E-A-T' },
+  { code: 'meio_viral', label: '🚀 Viral' },
+  { code: 'meio_emocional', label: '💕 Emocional' },
+  { code: 'fechamento', label: '🎯 Fechamento' },
+];
+
+// ============================================
 // REGRAS DE CRUZAMENTO
 // ============================================
 const REGRAS_PILAR: Record<string, { tipoMeio: string; categoriasPermitidas: string[] }> = {
@@ -167,6 +179,7 @@ export default function Home() {
   const [legendaEditada, setLegendaEditada] = useState('');
   const [ctaSelecionada, setCtaSelecionada] = useState('');
   const [hashtagsSelecionadas, setHashtagsSelecionadas] = useState('');
+  const [tipoLegendaSelecionado, setTipoLegendaSelecionado] = useState<string>('todos');
 
   // Estados de UI
   const [copied, setCopied] = useState(false);
@@ -253,7 +266,7 @@ export default function Home() {
   // ============================================
   const getCtasFiltradas = (pilar: string, formato: string) => {
     const regra = REGRAS_PILAR[pilar];
-    if (!regra) return ctas.slice(0, 10);
+    if (!regra) return ctas;
 
     return ctas.filter(cta => {
       // Filtrar por formato se especificado
@@ -261,7 +274,7 @@ export default function Home() {
         return false;
       }
       return true;
-    }).slice(0, 15);
+    });
   };
 
   const getLegendasFiltradas = (pilar: string, tipo: string, procedimento?: string) => {
@@ -270,22 +283,22 @@ export default function Home() {
       if (pilar && leg.pilar && leg.pilar !== pilar) return false;
       if (procedimento && leg.procedimento && leg.procedimento !== procedimento) return false;
       return true;
-    }).slice(0, 10);
+    });
   };
 
   const getHashtagCombosFiltrados = (formato: string) => {
     const tipoCombo = formato?.toLowerCase() || 'reels';
     return hashtagCombos.filter(combo =>
       combo.tipo_formato?.toLowerCase() === tipoCombo
-    ).slice(0, 5);
+    );
   };
 
   const getKeywordsFiltradas = (procedimento?: string) => {
-    if (!procedimento) return keywords.slice(0, 10);
+    if (!procedimento) return keywords;
     return keywords.filter(kw =>
       kw.categoria?.toLowerCase().includes(procedimento.toLowerCase()) ||
       kw.keyword?.toLowerCase().includes(procedimento.replace(/_/g, ' '))
-    ).slice(0, 10);
+    );
   };
 
   const getProtocolosFiltrados = (formato: string) => {
@@ -464,7 +477,7 @@ export default function Home() {
   // RENDERIZAÇÃO - MONTADOR (WIZARD)
   // ============================================
   const renderMontador = () => {
-    const ctasFiltradas = selectedPost ? getCtasFiltradas(selectedPost.pilar, selectedPost.formato) : ctas.slice(0, 10);
+    const ctasFiltradas = selectedPost ? getCtasFiltradas(selectedPost.pilar, selectedPost.formato) : ctas;
     const legendasAbertura = selectedPost ? getLegendasFiltradas(selectedPost.pilar, 'abertura', selectedPost.procedimento) : [];
     const legendasMeio = selectedPost ? getLegendasFiltradas(selectedPost.pilar, REGRAS_PILAR[selectedPost.pilar]?.tipoMeio || 'meio_eeat', selectedPost.procedimento) : [];
     const combosFiltrados = selectedPost ? getHashtagCombosFiltrados(selectedPost.formato) : [];
@@ -501,7 +514,7 @@ export default function Home() {
             <p className="text-gray-400 mb-4">Selecione um post para usar como base. As sugestoes serao filtradas pelo pilar e formato.</p>
 
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {postsFiltrados.slice(0, 20).map((post) => (
+              {postsFiltrados.map((post) => (
                 <div
                   key={post.id}
                   onClick={() => setSelectedPost(post)}
@@ -601,25 +614,60 @@ export default function Home() {
               placeholder="Digite a legenda..."
             />
 
-            {/* Sugestoes de meio */}
-            {legendasMeio.length > 0 && (
-              <div className="mt-4">
-                <label className="text-gray-400 text-sm mb-2 block">
-                  Adicionar trecho ({REGRAS_PILAR[selectedPost?.pilar || '']?.tipoMeio || 'meio'}):
-                </label>
-                <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
-                  {legendasMeio.map((leg) => (
+            {/* Seletor de Tipo de Legenda */}
+            <div className="mt-4">
+              <label className="text-gray-400 text-sm mb-2 block">Escolha o tipo de legenda para adicionar:</label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {TIPOS_LEGENDA.map((tipo) => {
+                  const count = legendas.filter(l =>
+                    tipo.code === 'todos' || l.tipo === tipo.code
+                  ).length;
+                  return (
                     <button
-                      key={leg.id}
-                      onClick={() => setLegendaEditada(prev => prev + '\n\n' + leg.texto)}
-                      className="text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300"
+                      key={tipo.code}
+                      onClick={() => setTipoLegendaSelecionado(tipo.code)}
+                      className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                        tipoLegendaSelecionado === tipo.code
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
                     >
-                      + {leg.texto.substring(0, 80)}...
+                      {tipo.label}
+                      <span className="ml-1 text-xs opacity-70">({count})</span>
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
+
+              {/* Lista de legendas filtradas por tipo */}
+              {(() => {
+                const legendasFiltradas = selectedPost
+                  ? getLegendasFiltradas(
+                      selectedPost.pilar,
+                      tipoLegendaSelecionado === 'todos' ? '' : tipoLegendaSelecionado,
+                      selectedPost.procedimento
+                    )
+                  : [];
+
+                return legendasFiltradas.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
+                    {legendasFiltradas.map((leg) => (
+                      <button
+                        key={leg.id}
+                        onClick={() => setLegendaEditada(prev => prev + '\n\n' + leg.texto)}
+                        className="text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-gray-300"
+                      >
+                        + {leg.texto.substring(0, 80)}...
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-gray-500 text-sm">
+                    Nenhuma legenda encontrada para este tipo
+                  </div>
+                );
+              })()}
+            </div>
 
             <div className="mt-6 flex justify-between">
               <button
@@ -660,7 +708,7 @@ export default function Home() {
             {/* Sugestoes do banco */}
             <div className="mt-4">
               <label className="text-gray-400 text-sm mb-2 block">Sugestoes compatíveis ({ctasFiltradas.length}):</label>
-              <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
+              <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
                 {ctasFiltradas.map((cta) => (
                   <button
                     key={cta.id}
@@ -713,7 +761,7 @@ export default function Home() {
             {combosFiltrados.length > 0 && (
               <div className="mt-4">
                 <label className="text-gray-400 text-sm mb-2 block">Combos prontos ({combosFiltrados.length}):</label>
-                <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
                   {combosFiltrados.map((combo) => (
                     <button
                       key={combo.id}
@@ -730,8 +778,8 @@ export default function Home() {
             {/* Hashtags individuais */}
             <div className="mt-4">
               <label className="text-gray-400 text-sm mb-2 block">Hashtags individuais (clique para adicionar):</label>
-              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                {hashtags.slice(0, 30).map((h) => (
+              <div className="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
+                {hashtags.map((h) => (
                   <button
                     key={h.id}
                     onClick={() => setHashtagsSelecionadas(prev => prev + ' ' + h.tag)}

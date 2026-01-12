@@ -37,7 +37,7 @@ export function useSupabaseQuery<T>({ table, select = '*', filters, orderBy, lim
         const { data, error } = await query;
 
         if (error) throw error;
-        setData(data || []);
+        setData((data as T[]) || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erro desconhecido');
       } finally {
