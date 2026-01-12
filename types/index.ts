@@ -1,4 +1,4 @@
-export * from './auth';
+// types/index.ts
 export * from './database';
 export * from './postpack';
-export * from './workflow';
+export * from './ui';
