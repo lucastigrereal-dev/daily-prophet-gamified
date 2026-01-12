@@ -288,10 +288,20 @@ export default function Home() {
     ).slice(0, 10);
   };
 
-  const getProtocolosFiltrados = (pilar: string) => {
-    if (!pilar) return protocols;
+  const getProtocolosFiltrados = (formato: string) => {
+    if (!formato) return protocols;
+
+    // Mapear formato para category do banco
+    const categoryMap: Record<string, string> = {
+      'Reels': 'reels',
+      'Carrossel': 'carrossel',
+      'Stories': 'geral'
+    };
+
+    const category = categoryMap[formato] || 'geral';
+
     return protocols.filter(protocol =>
-      protocol.category?.toLowerCase() === pilar.toLowerCase()
+      protocol.category?.toLowerCase() === category.toLowerCase()
     );
   };
 
@@ -796,11 +806,11 @@ export default function Home() {
 
             {/* PAINEL DE PROTOCOLOS */}
             {mostrarProtocolos && selectedPost && (() => {
-              const protocolosFiltrados = getProtocolosFiltrados(selectedPost.pilar);
+              const protocolosFiltrados = getProtocolosFiltrados(selectedPost.formato);
               return (
                 <div className="border-t border-gray-700 pt-6 mt-6">
                   <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    📋 Protocolos ({selectedPost.pilar})
+                    📋 Protocolos ({selectedPost.formato})
                   </h3>
                   <p className="text-gray-400 text-sm mb-4">
                     Marque os protocolos que você seguiu ao criar este post:
@@ -835,7 +845,7 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="bg-gray-700 rounded-lg p-4 text-gray-400 text-center mb-6">
-                      Nenhum protocolo encontrado para o pilar "{selectedPost.pilar}"
+                      Nenhum protocolo encontrado para o formato "{selectedPost.formato}"
                     </div>
                   )}
 
