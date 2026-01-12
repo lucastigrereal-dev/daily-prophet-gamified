@@ -89,6 +89,41 @@ const TIPOS_LEGENDA = [
 ];
 
 // ============================================
+// CATEGORIAS DE CTA
+// ============================================
+// Mapeamento de categoria_id para nome
+const CATEGORIA_ID_MAP: Record<number, string> = {
+  1: 'Salvamento',
+  2: 'Comentário',
+  3: 'Compartilhamento',
+  4: 'Direct',
+  5: 'Link Bio',
+  6: 'Agendamento',
+  7: 'Autoridade',
+  8: 'Educação',
+};
+
+const CATEGORIAS_CTA = [
+  { code: 'todos', label: '📋 Todos', id: null },
+  { code: 'salvamento', label: '💾 Salvamento', id: 1 },
+  { code: 'comentario', label: '💬 Comentário', id: 2 },
+  { code: 'compartilhamento', label: '📤 Compartilhar', id: 3 },
+  { code: 'direct', label: '💌 Direct', id: 4 },
+  { code: 'linkbio', label: '🔗 Link Bio', id: 5 },
+  { code: 'agendamento', label: '📅 Agendar', id: 6 },
+];
+
+// ============================================
+// ALCANCES DE HASHTAG
+// ============================================
+const ALCANCES_HASHTAG = [
+  { code: 'todos', label: '📋 Todas' },
+  { code: 'grande', label: '🚀 Grande (50k+)', min: 50000 },
+  { code: 'media', label: '📊 Média (10-50k)', min: 10000, max: 50000 },
+  { code: 'pequena', label: '🎯 Pequena (<10k)', max: 10000 },
+];
+
+// ============================================
 // REGRAS DE CRUZAMENTO
 // ============================================
 const REGRAS_PILAR: Record<string, { tipoMeio: string; categoriasPermitidas: string[] }> = {
@@ -180,6 +215,8 @@ export default function Home() {
   const [ctaSelecionada, setCtaSelecionada] = useState('');
   const [hashtagsSelecionadas, setHashtagsSelecionadas] = useState('');
   const [tipoLegendaSelecionado, setTipoLegendaSelecionado] = useState<string>('todos');
+  const [categoriaCTASelecionada, setCategoriaCTASelecionada] = useState<string>('todos');
+  const [alcanceHashtagSelecionado, setAlcanceHashtagSelecionado] = useState<string>('todos');
 
   // Estados de UI
   const [copied, setCopied] = useState(false);
@@ -705,24 +742,60 @@ export default function Home() {
               />
             </div>
 
-            {/* Sugestoes do banco */}
+            {/* Seletor de Categoria CTA */}
             <div className="mt-4">
-              <label className="text-gray-400 text-sm mb-2 block">Sugestoes compatíveis ({ctasFiltradas.length}):</label>
-              <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
-                {ctasFiltradas.map((cta) => (
-                  <button
-                    key={cta.id}
-                    onClick={() => setCtaSelecionada(cta.texto)}
-                    className={`text-left p-3 rounded-lg text-sm transition-all ${
-                      ctaSelecionada === cta.texto
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                    }`}
-                  >
-                    {cta.texto}
-                  </button>
-                ))}
+              <label className="text-gray-400 text-sm mb-2 block">Escolha a categoria de CTA:</label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {CATEGORIAS_CTA.map((cat) => {
+                  const count = cat.id === null
+                    ? ctasFiltradas.length
+                    : ctasFiltradas.filter(c => c.categoria_id === cat.id).length;
+                  return (
+                    <button
+                      key={cat.code}
+                      onClick={() => setCategoriaCTASelecionada(cat.code)}
+                      className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                        categoriaCTASelecionada === cat.code
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {cat.label}
+                      <span className="ml-1 text-xs opacity-70">({count})</span>
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Lista de CTAs filtradas por categoria */}
+              {(() => {
+                const catSelected = CATEGORIAS_CTA.find(c => c.code === categoriaCTASelecionada);
+                const ctasFiltradasCategoria = catSelected?.id === null
+                  ? ctasFiltradas
+                  : ctasFiltradas.filter(c => c.categoria_id === catSelected?.id);
+
+                return ctasFiltradasCategoria.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
+                    {ctasFiltradasCategoria.map((cta) => (
+                      <button
+                        key={cta.id}
+                        onClick={() => setCtaSelecionada(cta.texto)}
+                        className={`text-left p-3 rounded-lg text-sm transition-all ${
+                          ctaSelecionada === cta.texto
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        }`}
+                      >
+                        {cta.texto}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-gray-500 text-sm">
+                    Nenhuma CTA encontrada nesta categoria
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="mt-6 flex justify-between">
@@ -775,20 +848,69 @@ export default function Home() {
               </div>
             )}
 
-            {/* Hashtags individuais */}
+            {/* Seletor de Alcance de Hashtag */}
             <div className="mt-4">
-              <label className="text-gray-400 text-sm mb-2 block">Hashtags individuais (clique para adicionar):</label>
-              <div className="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
-                {hashtags.map((h) => (
-                  <button
-                    key={h.id}
-                    onClick={() => setHashtagsSelecionadas(prev => prev + ' ' + h.tag)}
-                    className="px-3 py-1 bg-gray-700 hover:bg-purple-600 rounded-full text-sm text-gray-300"
-                  >
-                    {h.tag}
-                  </button>
-                ))}
+              <label className="text-gray-400 text-sm mb-2 block">Filtrar por alcance:</label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {ALCANCES_HASHTAG.map((alcance) => {
+                  let count = 0;
+                  if (alcance.code === 'todos') {
+                    count = hashtags.length;
+                  } else {
+                    count = hashtags.filter(h => {
+                      const vol = parseInt(h.volume) || 0;
+                      if (alcance.max && vol > alcance.max) return false;
+                      if (alcance.min && vol < alcance.min) return false;
+                      return true;
+                    }).length;
+                  }
+                  return (
+                    <button
+                      key={alcance.code}
+                      onClick={() => setAlcanceHashtagSelecionado(alcance.code)}
+                      className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                        alcanceHashtagSelecionado === alcance.code
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {alcance.label}
+                      <span className="ml-1 text-xs opacity-70">({count})</span>
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Lista de hashtags filtradas por alcance */}
+              {(() => {
+                let hashtagsFiltradas = hashtags;
+
+                if (alcanceHashtagSelecionado !== 'todos') {
+                  const alcance = ALCANCES_HASHTAG.find(a => a.code === alcanceHashtagSelecionado);
+                  if (alcance) {
+                    hashtagsFiltradas = hashtags.filter(h => {
+                      const vol = parseInt(h.volume) || 0;
+                      if (alcance.max && vol > alcance.max) return false;
+                      if (alcance.min && vol < alcance.min) return false;
+                      return true;
+                    });
+                  }
+                }
+
+                return (
+                  <div className="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
+                    {hashtagsFiltradas.map((h) => (
+                      <button
+                        key={h.id}
+                        onClick={() => setHashtagsSelecionadas(prev => prev + ' ' + h.tag)}
+                        className="px-3 py-1 bg-gray-700 hover:bg-purple-600 rounded-full text-sm text-gray-300"
+                      >
+                        {h.tag}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="mt-6 flex justify-between">
