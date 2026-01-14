@@ -1,4 +1,4 @@
-import { PostpackWorkflow, PostpackWorkflowRow, Metricas24h, FaseNumero, ChecklistItemData, WorkflowStatus, CreateWorkflowInput, WorkflowFilters } from '@/types/workflow';
+import { PostpackWorkflow, PostpackWorkflowRow, Metricas24h, FaseNumero, ChecklistItemData, WorkflowStatus, CreateWorkflowInput, WorkflowFilters, WorkflowComposicao } from '@/types/workflow';
 import { FASES_CONFIG, getProximaFase } from '@/config/checklist-config';
 import { supabaseWorkflow } from './supabase-workflow';
 import { createClient } from '@/lib/supabase/client';
@@ -47,12 +47,28 @@ export const workflowService = {
     return supabaseWorkflow.rowToWorkflow(row);
   },
 
+  async updateComposicao(workflowId: string, composicao: WorkflowComposicao): Promise<PostpackWorkflow> {
+    const row = await supabaseWorkflow.updateComposicao(workflowId, composicao);
+    return supabaseWorkflow.rowToWorkflow(row);
+  },
+
   async avancarFase(workflowId: string, force = false): Promise<{ success: boolean; pendentes?: string[] }> {
     const workflow = await this.getById(workflowId);
     if (!workflow) throw new Error('Workflow não encontrado');
     const faseAtual = workflow.status as FaseNumero;
+
+    // Composição sempre pode avançar (não tem checklist)
+    if (faseAtual === 'composicao') {
+      const proximaFase = getProximaFase(faseAtual);
+      if (proximaFase) await supabaseWorkflow.update(workflowId, { status: proximaFase });
+      return { success: true };
+    }
+
     const config = FASES_CONFIG[faseAtual];
-    const checklist = workflow[faseAtual].checklist;
+    const faseData = workflow[faseAtual];
+    if (!('checklist' in faseData)) return { success: true };
+
+    const checklist = faseData.checklist;
     const pendentes = config.items.filter(item => item.obrigatorio && (!checklist[item.id] || checklist[item.id].status === 'pendente')).map(i => i.id);
     if (pendentes.length > 0 && !force) return { success: false, pendentes };
     if (force && pendentes.length > 0) { for (const itemId of pendentes) { await this.updateChecklist(workflowId, faseAtual, itemId, { status: 'pulado' }); } }

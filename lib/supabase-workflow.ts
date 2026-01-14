@@ -8,6 +8,7 @@ import {
   WorkflowFilters,
   WorkflowStatus,
   FaseStatus,
+  WorkflowComposicao,
 } from '@/types/workflow';
 
 const getClient = () => createClient();
@@ -103,6 +104,21 @@ export const supabaseWorkflow = {
     return row;
   },
 
+  async updateComposicao(id: string, composicao: WorkflowComposicao): Promise<PostpackWorkflowRow> {
+    const current = await this.selectById(id);
+    if (!current) throw new Error('Workflow nao encontrado');
+
+    const { data: row, error } = await getClient()
+      .from('postpack_workflow')
+      .update({ composicao })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return row;
+  },
+
   rowToWorkflow(row: PostpackWorkflowRow): PostpackWorkflow {
     return {
       id: row.id,
@@ -114,6 +130,7 @@ export const supabaseWorkflow = {
       completed_at: row.completed_at || undefined,
       created_by: row.created_by || undefined,
       approved_by: row.approved_by || undefined,
+      composicao: row.composicao || undefined,
       fase_1: {
         status: row.fase_1_status as FaseStatus,
         completed_at: row.fase_1_completed_at || undefined,

@@ -226,6 +226,7 @@ export async function getWorkflowStats() {
 
   const stats = {
     total: data.length,
+    composicao: 0,
     fase_1: 0,
     fase_2: 0,
     fase_3: 0,
@@ -236,7 +237,9 @@ export async function getWorkflowStats() {
 
   data.forEach((item) => {
     const status = item.status as WorkflowStatus;
-    stats[status]++;
+    if (status in stats) {
+      (stats as any)[status]++;
+    }
   });
 
   return stats;

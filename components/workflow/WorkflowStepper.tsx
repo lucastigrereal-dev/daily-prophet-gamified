@@ -12,6 +12,9 @@ interface Props {
 export function WorkflowStepper({ currentFase, workflow, onFaseClick }: Props) {
   const getStatus = (fase: FaseNumero) => {
     const data = workflow[fase];
+    // Composição não tem status, sempre mostra completo se passou
+    if (fase === 'composicao') return fase === currentFase ? '🔵' : '✅';
+    if (!data || !('status' in data)) return '⚪';
     if (data.status === 'concluido') return '✅';
     if (data.status === 'incompleto') return '⚠️';
     if (fase === currentFase) return '🔵';

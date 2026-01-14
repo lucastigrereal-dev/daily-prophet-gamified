@@ -40,13 +40,13 @@ export function RelatorioFinal({ workflow: initialWorkflow, postpack }: Props) {
       <div className="mt-4 space-y-2">
         {FASES_ORDEM.map((fase) => {
           const config = FASES_CONFIG[fase];
-          const data = workflow[fase];
+          const data = workflow[fase as keyof Pick<PostpackWorkflow, 'fase_1' | 'fase_2' | 'fase_3' | 'fase_4' | 'fase_5'>];
           const total = config.items.length;
-          const done = config.items.filter(
+          const done = data && 'checklist' in data ? config.items.filter(
             (i) =>
               data.checklist[i.id]?.status === 'concluido' ||
               data.checklist[i.id]?.status === 'pulado'
-          ).length;
+          ).length : 0;
 
           return (
             <div key={fase} className="flex justify-between p-2 bg-gray-50 rounded">

@@ -70,7 +70,7 @@ export function useWorkflow(workflowId: string) {
   }
 
   function getProximaFase(atual: WorkflowStatus): WorkflowStatus | null {
-    const fases: FaseNumero[] = ['fase_1', 'fase_2', 'fase_3', 'fase_4', 'fase_5']
+    const fases: FaseNumero[] = ['composicao', 'fase_1', 'fase_2', 'fase_3', 'fase_4', 'fase_5']
     const idx = fases.indexOf(atual as FaseNumero)
     return idx >= 0 && idx < fases.length - 1 ? fases[idx + 1] : null
   }
@@ -79,13 +79,21 @@ export function useWorkflow(workflowId: string) {
     if (!workflow) return false
 
     const faseAtual = workflow.status as FaseNumero
+
+    // Composição sempre pode avançar (não usa checklist)
+    if (faseAtual === 'composicao') return true
+
     if (!workflow[faseAtual]) return true
 
-    const checklist = workflow[faseAtual].checklist
+    // Type guard: apenas fases têm checklist
+    const faseData = workflow[faseAtual]
+    if (!('checklist' in faseData)) return true
+
+    const checklist = faseData.checklist
     if (!checklist || Object.keys(checklist).length === 0) return true
 
     // Verificar se todos os itens obrigatórios estão concluídos
-    return Object.values(checklist).every(item =>
+    return Object.values(checklist).every((item: any) =>
       item.status === 'concluido' || item.status === 'na'
     )
   }

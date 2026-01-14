@@ -62,7 +62,16 @@ export const FASE_5_CONFIG: FaseConfig = {
   ],
 };
 
+// Composição (pré-fase)
+const COMPOSICAO_CONFIG: FaseConfig = {
+  nome: 'Composição',
+  icone: '✏️',
+  descricao: 'Definição do formato e estrutura do conteúdo',
+  items: [], // Não usa checklist tradicional
+};
+
 export const FASES_CONFIG: Record<FaseNumero, FaseConfig> = {
+  composicao: COMPOSICAO_CONFIG,
   fase_1: FASE_1_CONFIG,
   fase_2: FASE_2_CONFIG,
   fase_3: FASE_3_CONFIG,
@@ -70,7 +79,7 @@ export const FASES_CONFIG: Record<FaseNumero, FaseConfig> = {
   fase_5: FASE_5_CONFIG,
 };
 
-export const FASES_ORDEM: FaseNumero[] = ['fase_1', 'fase_2', 'fase_3', 'fase_4', 'fase_5'];
+export const FASES_ORDEM: FaseNumero[] = ['composicao', 'fase_1', 'fase_2', 'fase_3', 'fase_4', 'fase_5'];
 
 export function getProximaFase(faseAtual: FaseNumero): FaseNumero | null {
   const idx = FASES_ORDEM.indexOf(faseAtual);

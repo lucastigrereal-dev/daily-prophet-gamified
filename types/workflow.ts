@@ -1,6 +1,6 @@
 // Tipos do Sistema de Workflow de 5 Fases
 
-export type FaseNumero = 'fase_1' | 'fase_2' | 'fase_3' | 'fase_4' | 'fase_5';
+export type FaseNumero = 'composicao' | 'fase_1' | 'fase_2' | 'fase_3' | 'fase_4' | 'fase_5';
 export type WorkflowStatus = FaseNumero | 'concluido';
 export type FaseStatus = 'pendente' | 'em_progresso' | 'concluido' | 'incompleto';
 export type ChecklistItemStatus = 'pendente' | 'concluido' | 'pulado' | 'na';
@@ -26,6 +26,21 @@ export interface Metricas24h {
   saves?: number;
   comments?: number;
   shares?: number;
+}
+
+export interface WorkflowComposicao {
+  reels?: {
+    montarScript: boolean;
+    script?: string;
+  };
+  carrossel?: {
+    tema: string;
+    textosGerados?: string[];
+  };
+  stories?: {
+    estrategia: string;
+    exemplos?: any[];
+  };
 }
 
 export interface ChecklistItemData {
@@ -75,6 +90,7 @@ export interface PostpackWorkflow {
   metricas_24h?: Metricas24h;
   metricas_7d?: Metricas24h;
   notas?: string;
+  composicao?: WorkflowComposicao;
   fase_1: FaseData;
   fase_2: FaseData;
   fase_3: FaseData;
@@ -95,6 +111,7 @@ export interface PostpackWorkflowRow {
   notas?: string;
   metricas_24h?: Metricas24h;
   metricas_7d?: Metricas24h;
+  composicao?: WorkflowComposicao;
   fase_1_status: string;
   fase_1_checklist: Record<string, ChecklistItemData>;
   fase_1_started_at?: string;
