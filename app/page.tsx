@@ -250,49 +250,33 @@ export default function Home() {
   // ============================================
   const loadData = async () => {
     try {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      setLoading(true);
 
-      if (!url || !key) {
-        setError('Configuracao do Supabase nao encontrada');
-        setLoading(false);
-        return;
-      }
-
-      const headers = { apikey: key, Authorization: `Bearer ${key}` };
-
-      // Carregar todos os dados em paralelo
-      const [resPosts, resCtas, resLegendas, resHashtags, resCombos, resKeywords, resProtocols] = await Promise.all([
-        fetch(`${url}/rest/v1/posts?select=*&order=data_publicacao`, { headers }),
-        fetch(`${url}/rest/v1/ctas?select=*&ativo=eq.true`, { headers }),
-        fetch(`${url}/rest/v1/legendas?select=*&ativo=eq.true`, { headers }),
-        fetch(`${url}/rest/v1/hashtags?select=*&ativo=eq.true&risco_compliance=neq.alto`, { headers }),
-        fetch(`${url}/rest/v1/hashtag_combos?select=*&ativo=eq.true`, { headers }),
-        fetch(`${url}/rest/v1/keywords?select=*`, { headers }),
-        fetch(`${url}/rest/v1/protocols?select=*&isactive=eq.true`, { headers }),
+      // ✅ USAR OS NOVOS ENDPOINTS COM SUPABASE CORRETAMENTE CONFIGURADO
+      const [resIdeias, resCtas, resLegendas, resHashtags, resKeywords] = await Promise.all([
+        fetch('/api/ideias?limit=1000'),
+        fetch('/api/content/ctas?limit=1000'),
+        fetch('/api/content/legendas?limit=1000'),
+        fetch('/api/content/hashtags?limit=1000'),
+        fetch('/api/content/keywords?limit=1000'),
       ]);
 
-      const [postsData, ctasData, legendasData, hashtagsData, combosData, keywordsData, protocolsData] = await Promise.all([
-        resPosts.json(),
-        resCtas.json(),
-        resLegendas.json(),
-        resHashtags.json(),
-        resCombos.json(),
-        resKeywords.json(),
-        resProtocols.json(),
-      ]);
+      const ideiasData = await resIdeias.json();
+      const ctasData = await resCtas.json();
+      const legendasData = await resLegendas.json();
+      const hashtagsData = await resHashtags.json();
+      const keywordsData = await resKeywords.json();
 
-      if (Array.isArray(postsData)) setPosts(postsData);
+      // Usar API responses (que retornam arrays)
+      if (Array.isArray(ideiasData.ideias)) setPosts(ideiasData.ideias);
       if (Array.isArray(ctasData)) setCtas(ctasData);
       if (Array.isArray(legendasData)) setLegendas(legendasData);
       if (Array.isArray(hashtagsData)) setHashtags(hashtagsData);
-      if (Array.isArray(combosData)) setHashtagCombos(combosData);
       if (Array.isArray(keywordsData)) setKeywords(keywordsData);
-      if (Array.isArray(protocolsData)) setProtocols(protocolsData);
 
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
-      setError('Erro ao conectar com o banco de dados');
+      setError('Erro ao conectar com o banco de dados: ' + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
