@@ -22,18 +22,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch example posts from database that match the theme
+    // Search in title and objective fields (text fields, not JSON)
     let query = supabase
-      .from('posts_exemplo')
+      .from('postpacks')
       .select('*')
-      .ilike('content', `%${tema}%`)
+      .or(`title.ilike.%${tema}%,objective.ilike.%${tema}%`)
       .limit(quantidade);
 
     if (tipo) {
-      query = query.ilike('tipo_post', `%${tipo}%`);
+      query = query.ilike('format', `%${tipo}%`);
     }
 
     if (procedimento) {
-      query = query.ilike('procedimento', `%${procedimento}%`);
+      query = query.ilike('pilar', `%${procedimento}%`);
     }
 
     const { data: examples, error: examplesError } = await query;
@@ -55,15 +56,15 @@ export async function POST(request: NextRequest) {
         .slice(0, Math.ceil(quantidade / 2))
         .map(ex => ({
           id: ex.id,
-          titulo: ex.id.substring(0, 20),
+          titulo: ex.title || ex.id.substring(0, 20),
           tipo: 'exemplo',
-          conteudo: ex.content || '',
+          conteudo: ex.content || ex.objective || '',
         })),
       ...(legendas || [])
         .slice(0, Math.floor(quantidade / 2))
         .map(leg => ({
           id: leg.id,
-          titulo: leg.id.substring(0, 20),
+          titulo: leg.texto?.substring(0, 50) || leg.id.substring(0, 20),
           tipo: 'legenda',
           conteudo: leg.texto || '',
         })),

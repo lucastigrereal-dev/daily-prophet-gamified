@@ -45,13 +45,15 @@ export async function POST(request: NextRequest) {
         };
       });
 
-    // Insert into posts_exemplo table
+    // Insert into postpacks table
     const { data, error } = await supabase
-      .from('posts_exemplo')
+      .from('postpacks')
       .insert(
         records.map(r => ({
-          id: `post_${r.index.padStart(3, '0')}`,
-          tipo_post: r.tipo_de_post,
+          title: r.headline || r.conteudo_resumo || `Post ${r.index}`,
+          objective: r.conteudo_resumo,
+          format: r.tipo_de_post.toLowerCase() === 'reel' ? 'reel' :
+                  r.tipo_de_post.toLowerCase() === 'carrossel' ? 'carrossel' : 'story',
           content: JSON.stringify({
             conteudo_resumo: r.conteudo_resumo,
             headline: r.headline,
@@ -71,7 +73,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       imported: data?.length || 0,
-      message: `${data?.length || 0} posts importados com sucesso`,
+      message: `${data?.length || 0} postpacks importados com sucesso`,
+      data: data,
     });
   } catch (error: any) {
     console.error('[API] Error importing CSV:', error);
