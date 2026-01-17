@@ -9,10 +9,8 @@ export type ChecklistItemStatus = 'pendente' | 'concluido' | 'pulado' | 'na';
 export interface Postpack {
   id: string;
   title: string;
-  name?: string;
   objective: string;
   format: string;
-  procedure?: string;
   status: string;
   content?: any;
   created_at?: string;
