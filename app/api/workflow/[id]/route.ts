@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseWorkflow } from '@/lib/supabase-workflow';
+import type { PostpackWorkflowRow } from '@/types/workflow';
 
 // GET /api/workflow/[id] - Fetch workflow by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     const row = await supabaseWorkflow.selectById(id);
 
@@ -32,10 +33,10 @@ export async function GET(
 // PATCH /api/workflow/[id] - Update workflow
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
     const body = await request.json();
 
     // Convert PostpackWorkflow updates back to PostpackWorkflowRow format
