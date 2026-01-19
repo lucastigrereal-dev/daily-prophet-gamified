@@ -6,8 +6,11 @@ interface Hashtag {
   id: string;
   texto: string;
   tema: string;
-  volume: number;
-  ativo: boolean;
+  volume?: number;
+  tipo_post?: string;
+  pilar?: string;
+  objetivo?: string;
+  ativo?: boolean;
 }
 
 interface SeletorHashtagsProps {
@@ -178,7 +181,7 @@ export default function SeletorHashtags({
             >
               <div className="truncate">{hashtag.texto}</div>
               <div className="text-xs mt-1 opacity-70">
-                {hashtag.volume > 0 && `📊 ${hashtag.volume}`}
+                {hashtag.volume && hashtag.volume > 0 && `📊 ${hashtag.volume}`}
               </div>
             </button>
           );

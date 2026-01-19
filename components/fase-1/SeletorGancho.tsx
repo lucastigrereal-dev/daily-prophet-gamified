@@ -5,12 +5,14 @@ import { useState, useEffect } from 'react';
 interface Gancho {
   id: string;
   texto: string;
-  tipo_legenda: string;
-  tipo_post: string;
-  pilar: string;
-  objetivo: string;
-  ativo: boolean;
-  uso_count: number;
+  tipo_gancho?: string;
+  tipo_legenda?: string;
+  tipo_post?: string;
+  pilar?: string;
+  objetivo?: string;
+  procedimento?: string;
+  ativo?: boolean;
+  uso_count?: number;
 }
 
 interface SeletorGanchoProps {

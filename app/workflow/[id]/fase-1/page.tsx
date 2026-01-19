@@ -179,9 +179,9 @@ export default function Fase1Page() {
         <div className="bg-white rounded-lg shadow-md p-8 mb-6">
           {currentStep === 6 && (
             <SeletorGancho
-              formato={workflow.postpack?.format || ''}
-              pilar={workflow.postpack?.pillar || ''}
-              objetivo={workflow.postpack?.objective || ''}
+              formato={workflow.postpack?.format || 'reel'}
+              pilar={workflow.postpack?.pillar || 'geral'}
+              objetivo={workflow.postpack?.objective || 'engajamento'}
               selectedId={selectedGancho}
               onSelect={handleGanchoSelect}
             />
@@ -189,9 +189,9 @@ export default function Fase1Page() {
 
           {currentStep === 7 && (
             <SeletorLegenda
-              formato={workflow.postpack?.format || ''}
-              pilar={workflow.postpack?.pillar || ''}
-              objetivo={workflow.postpack?.objective || ''}
+              formato={workflow.postpack?.format || 'reel'}
+              pilar={workflow.postpack?.pillar || 'geral'}
+              objetivo={workflow.postpack?.objective || 'engajamento'}
               selectedId={selectedLegenda}
               onSelect={handleLegendaSelect}
             />
@@ -199,9 +199,9 @@ export default function Fase1Page() {
 
           {currentStep === 8 && (
             <SeletorCTA
-              formato={workflow.postpack?.format || ''}
-              pilar={workflow.postpack?.pillar || ''}
-              objetivo={workflow.postpack?.objective || ''}
+              formato={workflow.postpack?.format || 'reel'}
+              pilar={workflow.postpack?.pillar || 'geral'}
+              objetivo={workflow.postpack?.objective || 'engajamento'}
               selectedId={selectedCTA}
               onSelect={handleCTASelect}
             />
@@ -209,9 +209,9 @@ export default function Fase1Page() {
 
           {currentStep === 9 && (
             <SeletorHashtags
-              formato={workflow.postpack?.format || ''}
-              pilar={workflow.postpack?.pillar || ''}
-              objetivo={workflow.postpack?.objective || ''}
+              formato={workflow.postpack?.format || 'reel'}
+              pilar={workflow.postpack?.pillar || 'geral'}
+              objetivo={workflow.postpack?.objective || 'engajamento'}
               selectedIds={selectedHashtags}
               onSelect={handleHashtagsSelect}
             />

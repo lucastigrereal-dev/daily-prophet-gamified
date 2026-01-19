@@ -6,9 +6,11 @@ interface Legenda {
   id: string;
   texto: string;
   tipo_legenda: string;
-  tipo_post: string | null;
-  procedimento: string | null;
-  created_at: string;
+  tipo_post?: string | null;
+  procedimento?: string | null;
+  pilar?: string | null;
+  objetivo?: string | null;
+  created_at?: string;
 }
 
 interface SeletorLegendaProps {

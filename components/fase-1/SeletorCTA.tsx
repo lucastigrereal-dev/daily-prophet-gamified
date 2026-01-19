@@ -6,8 +6,10 @@ interface CTA {
   id: string;
   texto: string;
   categoria: string;
-  tipo_post: string;
-  ativo: boolean;
+  tipo_post?: string;
+  pilar?: string;
+  objetivo?: string;
+  ativo?: boolean;
 }
 
 interface SeletorCTAProps {
