@@ -8,12 +8,13 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const tipo = searchParams.get('tipo');
     const procedimento = searchParams.get('procedimento');
-    const limit = searchParams.get('limit') || '20';
+    const limit = searchParams.get('limit') || '50';
 
     let query = supabase
       .from('legendas')
-      .select('*')
-      .eq('tipo_legenda', 'legenda')
+      .select('id, texto, tipo_legenda, tipo_post, procedimento, created_at, updated_at')
+      .is('tipo_legenda', null)
+      .or(`tipo_legenda.eq.legenda,tipo_legenda.is.null`)
       .order('created_at', { ascending: false })
       .limit(parseInt(limit));
 
@@ -33,11 +34,15 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json(data || []);
+    return NextResponse.json({
+      data: data || [],
+      count: data?.length || 0,
+      filters: { search, tipo, procedimento }
+    });
   } catch (error: any) {
     console.error('[API] Error listing legendas:', error);
     return NextResponse.json(
-      { error: error.message || 'Erro ao listar legendas' },
+      { error: error.message || 'Erro ao listar legendas', details: error },
       { status: 500 }
     );
   }
