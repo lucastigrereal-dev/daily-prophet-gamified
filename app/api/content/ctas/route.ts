@@ -8,11 +8,15 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const tipo = searchParams.get('tipo');
     const procedimento = searchParams.get('procedimento');
-    const limit = searchParams.get('limit') || '20';
+    const categoria = searchParams.get('categoria');
+    const pilar = searchParams.get('pilar');
+    const objetivo = searchParams.get('objetivo');
+    const limit = searchParams.get('limit') || '100';
 
     let query = supabase
       .from('ctas')
-      .select('*')
+      .select('id, texto, categoria, tipo_post, pilar, objetivo, ativo, created_at, updated_at')
+      .eq('ativo', true)
       .order('created_at', { ascending: false })
       .limit(parseInt(limit));
 
@@ -28,15 +32,31 @@ export async function GET(request: NextRequest) {
       query = query.ilike('procedimento', `%${procedimento}%`);
     }
 
+    if (categoria) {
+      query = query.ilike('categoria', `%${categoria}%`);
+    }
+
+    if (pilar) {
+      query = query.ilike('pilar', `%${pilar}%`);
+    }
+
+    if (objetivo) {
+      query = query.ilike('objetivo', `%${objetivo}%`);
+    }
+
     const { data, error } = await query;
 
     if (error) throw error;
 
-    return NextResponse.json(data || []);
+    return NextResponse.json({
+      data: data || [],
+      count: data?.length || 0,
+      filters: { search, tipo, procedimento, categoria, pilar, objetivo }
+    });
   } catch (error: any) {
     console.error('[API] Error listing CTAs:', error);
     return NextResponse.json(
-      { error: error.message || 'Erro ao listar CTAs' },
+      { error: error.message || 'Erro ao listar CTAs', details: error },
       { status: 500 }
     );
   }

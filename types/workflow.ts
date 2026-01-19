@@ -13,6 +13,7 @@ export interface Postpack {
   objective: string;
   format: string;
   procedure?: string;
+  pillar?: string;
   status: string;
   content?: any;
   created_at?: string;
@@ -75,6 +76,15 @@ export interface FaseData {
   started_at?: string;
   completed_at?: string;
   feedback?: string;
+  // Fase-1 specific fields
+  gancho_id?: string;
+  gancho_data?: any;
+  legenda_id?: string;
+  legenda_data?: any;
+  cta_id?: string;
+  cta_data?: any;
+  hashtags_ids?: string[];
+  protocolo_id?: string;
 }
 
 export interface PostpackWorkflow {
