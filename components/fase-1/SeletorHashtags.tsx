@@ -50,7 +50,7 @@ export default function SeletorHashtags({
     setError(null);
     try {
       const params = new URLSearchParams();
-      if (formato) params.append('tipo', formato);
+      if (formato) params.append('tipo_post', formato);
       if (pilar) params.append('pilar', pilar);
       if (objetivo) params.append('objetivo', objetivo);
       params.append('limit', '150');

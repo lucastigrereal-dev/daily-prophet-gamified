@@ -6,7 +6,6 @@ interface Gancho {
   id: string;
   texto: string;
   tipo_gancho?: string;
-  tipo_legenda?: string;
   tipo_post?: string;
   pilar?: string;
   objetivo?: string;
@@ -44,7 +43,7 @@ export default function SeletorGancho({
     setError(null);
     try {
       const params = new URLSearchParams();
-      if (formato) params.append('tipo', formato);
+      if (formato) params.append('tipo_post', formato);
       if (pilar) params.append('pilar', pilar);
       if (objetivo) params.append('objetivo', objetivo);
       params.append('limit', '50');

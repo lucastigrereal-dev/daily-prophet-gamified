@@ -43,6 +43,8 @@ export default function SeletorLegenda({
     try {
       const params = new URLSearchParams();
       if (formato) params.append('tipo', formato);
+      if (pilar) params.append('pilar', pilar);
+      if (objetivo) params.append('objetivo', objetivo);
       params.append('limit', '30');
 
       const res = await fetch(`/api/content/legendas?${params}`);

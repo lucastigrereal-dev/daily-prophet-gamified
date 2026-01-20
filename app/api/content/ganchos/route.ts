@@ -14,9 +14,8 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('ganchos')
-      .select('id, texto, tipo_legenda, tipo_post, procedimento, pilar, objetivo, ativo, uso_count, created_at, updated_at')
+      .select('id, texto, tipo_gancho, tipo_post, procedimento, pilar, objetivo, ativo, uso_count, created_at, updated_at')
       .eq('ativo', true)
-      .eq('tipo_legenda', 'gancho')
       .order('uso_count', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(parseInt(limit));

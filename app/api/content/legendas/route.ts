@@ -12,9 +12,8 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('legendas')
-      .select('id, texto, tipo_legenda, tipo_post, procedimento, created_at, updated_at')
-      .is('tipo_legenda', null)
-      .or(`tipo_legenda.eq.legenda,tipo_legenda.is.null`)
+      .select('id, texto, tipo_post, procedimento, pilar, objetivo, ativo, created_at, updated_at')
+      .eq('ativo', true)
       .order('created_at', { ascending: false })
       .limit(parseInt(limit));
 
