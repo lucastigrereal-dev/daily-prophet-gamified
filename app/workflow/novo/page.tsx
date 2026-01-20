@@ -101,7 +101,7 @@ export default function NovoWorkflowPage() {
 
       if (e2) throw e2;
 
-      router.push(`/workflow/${workflow.id}/composicao`);
+      router.push(`/workflow/${workflow.id}/montador`);
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : 'Erro ao criar');
