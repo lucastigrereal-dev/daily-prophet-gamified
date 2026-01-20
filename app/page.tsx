@@ -1078,23 +1078,31 @@ export default function Home() {
           </div>
 
           {/* Toggle de modo */}
-          <div className="flex gap-2 bg-gray-800 p-1 rounded-lg">
-            <button
-              onClick={() => setModo('biblioteca')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                modo === 'biblioteca' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
-              }`}
+          <div className="flex gap-2">
+            <div className="flex gap-2 bg-gray-800 p-1 rounded-lg">
+              <button
+                onClick={() => setModo('biblioteca')}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  modo === 'biblioteca' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                📚 Biblioteca
+              </button>
+              <button
+                onClick={() => setModo('montador')}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  modo === 'montador' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                🔧 Montador
+              </button>
+            </div>
+            <a
+              href="/dashboard"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
             >
-              📚 Biblioteca
-            </button>
-            <button
-              onClick={() => setModo('montador')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                modo === 'montador' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              🔧 Montador
-            </button>
+              📊 Dashboard
+            </a>
           </div>
         </div>
 

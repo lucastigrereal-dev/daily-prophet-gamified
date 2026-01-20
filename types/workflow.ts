@@ -18,6 +18,12 @@ export interface Postpack {
   content?: any;
   created_at?: string;
   updated_at?: string;
+  engajamento_rate?: number;
+  views?: number;
+  likes?: number;
+  comments?: number;
+  shares?: number;
+  saves?: number;
 }
 
 // Alias para compatibilidade
